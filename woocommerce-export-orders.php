@@ -1,12 +1,14 @@
 <?php 
-/*
-Plugin Name: WooCommerce Export Orders
-Plugin URI: http://www.imaginate-solutions.com/
-Description: This plugin lets store owners to export orders
-Version: 1.0.0
-Author: Dhruvin Shah
-Author URI: http://www.imaginate-solutions.com/
-*/
+/**
+ * Plugin Name: WooCommerce Export Orders
+ * Plugin URI: http://www.imaginate-solutions.com/
+ * Description: This plugin lets store owners to export orders
+ * Version: 1.0.0
+ * Author: Dhruvin Shah
+ * Author URI: http://www.imaginate-solutions.com/
+ * Requires at least: 3.0
+ * Tested up to: 4.8
+ */
 
 {
 	/**
@@ -143,20 +145,20 @@ Author URI: http://www.imaginate-solutions.com/
 								"sPaginationType": "full_numbers",
 								"bRetrieve": true,
 								"oLanguage": {
-													"sSearch": "Search:",
-													"sInfo": "Showing _START_ to _END_ of _TOTAL_ Products",
-													"sInfoEmpty": "Showing 0 to 0 of 0 entries",
-													"sZeroRecords": "No Products to display",
-													"sInfoFiltered": "(filtered from _MAX_total entries)",
-													"sEmptyTable": "No data available",
-													"sLengthMenu": "Number of records to show: _MENU_",
-													"oPaginate": {
-																	"sFirst":    "First",
-																	"sPrevious": "Previous",
-																	"sNext":     "Next",
-																	"sLast":     "Last"
-																  }
-												 },
+									"sSearch": "Search:",
+									"sInfo": "Showing _START_ to _END_ of _TOTAL_ Products",
+									"sInfoEmpty": "Showing 0 to 0 of 0 entries",
+									"sZeroRecords": "No Products to display",
+									"sInfoFiltered": "(filtered from _MAX_total entries)",
+									"sEmptyTable": "No data available",
+									"sLengthMenu": "Number of records to show: _MENU_",
+									"oPaginate": {
+													"sFirst":    "First",
+													"sPrevious": "Previous",
+													"sNext":     "Next",
+													"sLast":     "Last"
+												  }
+								},
 								//"sDom": 'T<"clear"><"H"lfr>t<"F"ip>',
 								"dom": 'Blfrtip',
 								"buttons": [
