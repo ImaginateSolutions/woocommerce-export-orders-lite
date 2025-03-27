@@ -1,15 +1,15 @@
 <?php 
-/*
-Plugin Name: WooCommerce Export Orders
-Plugin URI: https://imaginate-solutions.com/
-Description: This plugin lets store owners export orders.
-Version: 1.1.0
-Author: Dhruvin Shah
-Author URI: https://imaginate-solutions.com/
-Requires PHP: 8.0
-WC requires at least: 3.0.0
-WC tested up to: 8.0.0
-*/
+/**
+ * Plugin Name: Export Orders for WooCommerce
+ * Plugin URI: https://imaginate-solutions.com/
+ * Description: This plugin lets store owners export orders.
+ * Version: 1.2.0
+ * Author: Imaginate Solutions
+ * Author URI: https://imaginate-solutions.com/
+ * Requires PHP: 8.0
+ * WC requires at least: 3.0.0
+ * WC tested up to: 8.0.0
+ */
 
 /**
  * Check if WooCommerce is activated
