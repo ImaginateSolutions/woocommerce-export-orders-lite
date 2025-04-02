@@ -1,0 +1,23 @@
+#progress-container {
+    margin-top: 10px;
+    width: 100%;
+    background: #e1e1e1;
+}
+
+#progress-bar {
+    width: 0%;
+    height: 20px;
+    background: #0073aa;
+}
+
+.pagination-wrapper {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-top: 20px;
+}
+
+.pagination-wrapper button, .pagination-wrapper input {
+	padding: 5px 10px;
+	font-size: 14px;
+}
