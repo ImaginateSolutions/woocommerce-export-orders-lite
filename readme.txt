@@ -1,11 +1,11 @@
 === Export Orders for WooCommerce ===
 Contributors: ImagiSol, dhruvin
 Donate link: https://paypal.me/DhruvinS?_ga=1.134259249.1705473128.1507170477
-Tags: woocommerce, export orders, csv, pdf, export emails, export items
+Tags: woocommerce, export orders, export csv pdf xml excel json
 Requires at least: 3.0.1
-Tested up to: 6.7
+Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.2.0
+Stable tag: 2.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 

@@ -1,0 +1,28 @@
+{
+    "name": "imaginate-solutions/export-orders-woocommerce",
+    "version": "1.0.0",
+    "type": "wordpress-plugin",
+    "require": {
+        "mpdf/mpdf": "^8.3",
+        "phpoffice/phpspreadsheet": "^1.28"
+    },
+    "autoload": {
+        "psr-4": {
+            "EOWC\\": "includes/"
+        }
+    },
+    "config": {
+        "platform": {
+            "php": "8.1.99"
+        },
+        "process-timeout": 600,
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.13",
+        "wp-coding-standards/wpcs": "^3.3"
+    }
+}
