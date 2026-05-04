@@ -57,6 +57,7 @@ class EOWC_Admin {
 		if ( isset( $screen->id ) && ( 'woocommerce_page_wc-orders' === $screen->id || 'toplevel_page_eowc-export-orders' === $screen->id ) ) {
 			wp_enqueue_script( 'jquery' );
 			wp_enqueue_script( 'selectWoo' );
+			wp_enqueue_script( 'jquery-ui-sortable' );
 			wp_enqueue_style( 'woocommerce_admin_styles' );
 
 			wp_enqueue_style(
@@ -65,7 +66,7 @@ class EOWC_Admin {
 				array(),
 				EOWC_VERSION
 			);
-			wp_enqueue_script( 'eowc-export-orders', EOWC_PLUGIN_URL . 'assets/js/admin.js', array( 'jquery', 'selectWoo' ), EOWC_VERSION, true );
+			wp_enqueue_script( 'eowc-export-orders', EOWC_PLUGIN_URL . 'assets/js/admin.js', array( 'jquery', 'selectWoo', 'jquery-ui-sortable' ), EOWC_VERSION, true );
 			wp_localize_script(
 				'eowc-export-orders',
 				'eowc_export_orders_params',

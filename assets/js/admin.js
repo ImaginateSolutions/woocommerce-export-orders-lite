@@ -52,6 +52,30 @@ jQuery(function ($) {
     $('[name="eowc_columns[]"]:checked').closest('.eowc-checkbox-item').addClass('is-checked');
 
     /* =========================================================
+       Draggable export column order
+    ========================================================= */
+    if ($.fn.sortable) {
+        $('.eowc-checkbox-grid').sortable({
+            items: '.eowc-checkbox-item',
+            connectWith: '.eowc-checkbox-grid',
+            handle: '.eowc-drag-handle',
+            placeholder: 'eowc-checkbox-placeholder',
+            forcePlaceholderSize: true,
+            tolerance: 'pointer',
+            start: function (event, ui) {
+                ui.item.addClass('is-dragging');
+            },
+            stop: function (event, ui) {
+                ui.item.removeClass('is-dragging');
+            }
+        });
+    }
+
+    $(document).on('click', '.eowc-drag-handle', function (e) {
+        e.preventDefault();
+    });
+
+    /* =========================================================
        Step navigation: Config → Confirm
     ========================================================= */
     $('#eowc-proceed-btn').on('click', function () {

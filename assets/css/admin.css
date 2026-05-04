@@ -4,7 +4,7 @@
    ========================================================================== */
 
 :root {
-    --eowc-primary: #2563eb;
+    --eowc-primary: #3d205a;
     --eowc-primary-hover: #1d4ed8;
     --eowc-primary-light: #eff6ff;
     --eowc-success: #16a34a;
@@ -298,6 +298,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 6px;
+    min-height: 36px;
 }
 
 .eowc-checkbox-item {
@@ -310,6 +311,36 @@
     cursor: pointer;
     transition: border-color var(--eowc-transition), background var(--eowc-transition);
     user-select: none;
+}
+
+.eowc-drag-handle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 20px;
+    color: var(--eowc-text-subtle);
+    cursor: grab;
+    flex-shrink: 0;
+}
+
+.eowc-drag-handle svg {
+    width: 14px;
+    height: 14px;
+}
+
+.eowc-checkbox-item.is-dragging {
+    cursor: grabbing;
+    box-shadow: var(--eowc-shadow-md);
+    background: #fff;
+    z-index: 10;
+}
+
+.eowc-checkbox-placeholder {
+    min-height: 36px;
+    border: 1.5px dashed var(--eowc-primary);
+    border-radius: var(--eowc-radius-sm);
+    background: var(--eowc-primary-light);
 }
 
 .eowc-checkbox-item:hover {

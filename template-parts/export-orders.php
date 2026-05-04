@@ -143,7 +143,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 			</div>
 
-			<p class="eowc-card-desc"><?php esc_html_e( 'Choose which fields to include in the exported.', 'woocommerce-export-orders' ); ?></p>
+			<p class="eowc-card-desc"><?php esc_html_e( 'Choose fields to include, then drag them into the export order you want.', 'woocommerce-export-orders' ); ?></p>
 
 			<?php
 			$eowc_column_groups = array(
@@ -202,6 +202,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<div class="eowc-checkbox-grid">
 						<?php foreach ( $eowc_columns as $eowc_col_key => $eowc_col_label ) : ?>
 							<label class="eowc-checkbox-item">
+								<span class="eowc-drag-handle" aria-hidden="true">
+									<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg>
+								</span>
 								<input type="checkbox" name="eowc_columns[]" value="<?php echo esc_attr( $eowc_col_key ); ?>" checked>
 								<span class="eowc-checkmark">
 									<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
