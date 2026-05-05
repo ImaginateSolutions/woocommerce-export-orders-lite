@@ -613,6 +613,20 @@ class EOWC_Admin {
 				array(
 					'mode'                 => 'utf-8',
 					'format'               => 'A4-L',
+					'fontDir'              => array( EOWC_PLUGIN_PATH . 'vendor/mpdf/mpdf/ttfonts' ),
+					'fontdata'             => array(
+						'dejavusanscondensed' => array(
+							'R'         => 'DejaVuSansCondensed.ttf',
+							'B'         => 'DejaVuSansCondensed-Bold.ttf',
+							'I'         => 'DejaVuSansCondensed-Oblique.ttf',
+							'BI'        => 'DejaVuSansCondensed-BoldOblique.ttf',
+							'useOTL'    => 0xFF,
+							'useKashida' => 75,
+						),
+					),
+					'default_font'         => 'dejavusanscondensed',
+					'backupSubsFont'       => array(),
+					'backupSIPFont'        => '',
 					'simpleTables'         => true,
 					'packTableData'        => true,
 					'useSubstitutions'     => false,
