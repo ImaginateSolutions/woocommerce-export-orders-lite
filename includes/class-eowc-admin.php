@@ -27,7 +27,8 @@ class EOWC_Admin {
 		add_filter( 'admin_enqueue_scripts', array( $this, 'export_enqueue_scripts' ) );
 		add_filter( 'admin_menu', array( $this, 'order_export_page' ) );
 		add_action( 'admin_footer', array( $this, 'render_export_modal' ) );
-		add_action( 'woocommerce_order_list_table_extra_tablenav', array( $this, 'add_export_button' ), 20, 1 );
+		// 	add_action( 'woocommerce_order_list_table_extra_tablenav', array( $this, 'add_export_button' ), 20, 1 );
+		add_action( 'admin_head', array( $this, 'add_order_page_export_button' ) );
 		add_action( 'wp_ajax_eowc_export_orders', array( $this, 'handle_export_orders' ) );
 		add_action( 'admin_post_eowc_download_file', array( $this, 'download_file' ) );
 	}
@@ -111,6 +112,36 @@ class EOWC_Admin {
 				<?php esc_html_e( 'Export Orders', 'woocommerce-export-orders' ); ?>
 			</button>
 		</div>
+		<?php
+	}
+
+	/**
+	 * Add export button to the orders page.
+	 */
+	public function add_order_page_export_button() {
+		global $pagenow;
+
+		$is_orders_page = (
+			'admin.php' === $pagenow
+			&& isset( $_GET['page'] )
+			&& 'wc-orders' === $_GET['page']
+		);
+
+		if ( ! $is_orders_page ) {
+			return;
+		}
+		?>
+		<script>
+			jQuery(function($) {
+				const button = $('<button>', {
+					text: 'Export Orders',
+					class: 'button button-primary eowc-export-btn',
+					type: 'button'
+				})
+
+				$('.wrap .page-title-action').first().after(button);
+			});
+		</script>
 		<?php
 	}
 
