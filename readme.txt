@@ -34,7 +34,7 @@ Whether you need a WooCommerce order CSV export for accounting, an Excel order r
 - Review selected filters, format, and columns before starting the export.
 - Batch export processing with progress feedback for smoother order exports.
 - Compatible with WooCommerce HPOS / custom order tables.
-- Bundled PDF support uses a reduced font set to keep the plugin package smaller.
+- Bundled PDF support includes a reduced font set with Japanese/CJK fallback coverage.
 
 **Common Use Cases:**
 
@@ -161,9 +161,9 @@ Yes. The plugin declares compatibility with WooCommerce HPOS / custom order tabl
 
 No, this plugin requires WooCommerce to be installed and active.
 
-= Why does PDF export include fewer fonts than mPDF ships by default? =
+= Does PDF export support Japanese characters? =
 
-The plugin includes a reduced DejaVu Sans Condensed font set to keep the package size smaller while preserving normal PDF export support. Stores that require broader multilingual PDF font coverage may need a larger font set.
+Yes. The plugin includes DejaVu Sans Condensed plus Sun-ExtA/Sun-ExtB fallback fonts for Japanese/CJK PDF output while avoiding the full default mPDF font bundle.
 
 == Upgrade Notice ==
 

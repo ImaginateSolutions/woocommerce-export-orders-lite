@@ -23,7 +23,7 @@ Use it to export WooCommerce orders to CSV, Excel (XLSX), PDF, XML, or JSON. Fil
 - Review selected filters, format, and columns before starting the export.
 - Batch export processing with progress feedback.
 - Compatible with WooCommerce HPOS / custom order tables.
-- PDF support keeps the vendor package smaller by using a reduced DejaVu Sans Condensed font set.
+- PDF support includes a reduced font set with Japanese/CJK fallback coverage.
 
 ## Common Use Cases
 
@@ -45,7 +45,7 @@ Use it to export WooCommerce orders to CSV, Excel (XLSX), PDF, XML, or JSON. Fil
 
 ## Notes
 
-The PDF export uses a reduced font bundle to keep plugin size lower. This is suitable for normal Latin text exports. Stores that require broader multilingual PDF coverage may need to restore additional mPDF fonts and update the mPDF font configuration.
+The PDF export uses a reduced font bundle with DejaVu Sans Condensed plus Sun-ExtA/Sun-ExtB fallback fonts for Japanese/CJK output. Stores that require broader multilingual PDF coverage may need to add more mPDF fonts and update the mPDF font configuration.
 
 ## Changelog
 

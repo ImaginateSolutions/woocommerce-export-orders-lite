@@ -483,6 +483,7 @@ class EOWC_Admin {
 			// phpcs:ignore
 			$file = fopen( $file_path, $is_new ? 'w' : 'a' );
 			if ( $is_new ) {
+				fwrite( $file, "\xEF\xBB\xBF" );
 				fputcsv( $file, $headers );
 			}
 
@@ -511,7 +512,7 @@ class EOWC_Admin {
 			// Write JSON (append if possible? else rewrite, for simplicity we build the complete json!).
 			if ( $is_new ) {
 				// phpcs:ignore
-				file_put_contents( $file_path, wp_json_encode( $new_rows, JSON_PRETTY_PRINT ) );
+				file_put_contents( $file_path, wp_json_encode( $new_rows, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE ) );
 			} else {
 				// Read old, merge, then rewrite.
 				$existing = array();
@@ -521,7 +522,7 @@ class EOWC_Admin {
 				}
 				$all_rows = array_merge( $existing, $new_rows );
 				// phpcs:ignore
-				file_put_contents( $file_path, wp_json_encode( $all_rows, JSON_PRETTY_PRINT ) );
+				file_put_contents( $file_path, wp_json_encode( $all_rows, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE ) );
 			}
 		} elseif ( 'xml' === $export_format ) {
 			// Each chunk: read existing, append, re-save (or fully write if first batch).
@@ -532,7 +533,7 @@ class EOWC_Admin {
 				// Load existing XML.
 				$xml = \simplexml_load_file( $file_path );
 			} else {
-				$xml = new \SimpleXMLElement( "<?xml version=\"1.0\"?><{$xml_root_name}></{$xml_root_name}>" );
+				$xml = new \SimpleXMLElement( "<?xml version=\"1.0\" encoding=\"UTF-8\"?><{$xml_root_name}></{$xml_root_name}>" );
 			}
 
 			foreach ( $order_ids as $order_id ) {
@@ -640,10 +641,16 @@ class EOWC_Admin {
 			 * PERFORMANCE FIX 2:
 			 * Faster mPDF config
 			 */
+			$mpdf_temp_dir = trailingslashit( $upload_dir['basedir'] ) . 'eowc-mpdf-tmp';
+			if ( ! wp_mkdir_p( $mpdf_temp_dir ) ) {
+				wp_send_json_error( array( 'message' => 'Unable to create a temporary folder for PDF export.' ) );
+			}
+
 			$mpdf = new \Mpdf\Mpdf(
 				array(
 					'mode'                 => 'utf-8',
 					'format'               => 'A4-L',
+					'tempDir'              => $mpdf_temp_dir,
 					'fontDir'              => array( EOWC_PLUGIN_PATH . 'vendor/mpdf/mpdf/ttfonts' ),
 					'fontdata'             => array(
 						'dejavusanscondensed' => array(
@@ -654,13 +661,19 @@ class EOWC_Admin {
 							'useOTL'    => 0xFF,
 							'useKashida' => 75,
 						),
+						'sun-exta'             => array(
+							'R' => 'Sun-ExtA.ttf',
+						),
+						'sun-extb'             => array(
+							'R' => 'Sun-ExtB.ttf',
+						),
 					),
 					'default_font'         => 'dejavusanscondensed',
-					'backupSubsFont'       => array(),
-					'backupSIPFont'        => '',
+					'backupSubsFont'       => array( 'sun-exta' ),
+					'backupSIPFont'        => 'sun-extb',
 					'simpleTables'         => true,
 					'packTableData'        => true,
-					'useSubstitutions'     => false,
+					'useSubstitutions'     => true,
 					'shrink_tables_to_fit' => 1,
 				)
 			);
