@@ -1,54 +1,61 @@
-=== WooCommerce Export Orders ===
-Contributors: ImagiSol, dhruvin
-Donate link: http://www.imaginate-solutions.com/
-Tags: woocommerce, export orders, csv, pdf
-Requires at least: 3.0.1
-Tested up to: 4.8.0
-Stable tag: 4.8.0
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+# Export Orders for WooCommerce
 
-WooCommerce Export Orders
+Export WooCommerce orders to CSV, Excel, PDF, XML, or JSON with status filters, customer details, product items, and draggable column ordering.
 
-== Description ==
+## Description
 
-Woocommerce Export Order enables store managers to export the itemized list of the products for those orders which are marked Completed. 
+Export Orders for WooCommerce is a WooCommerce order export plugin for store owners, administrators, and managers who need quick access to order reports, customer details, billing and shipping data, and product line item information.
 
-The report can be exported in CSV, Excel and PDF format.
+Use it to export WooCommerce orders to CSV, Excel (XLSX), PDF, XML, or JSON. Filter orders by status and date range, choose the exact export fields, and drag columns into the same order you want in the final export file.
 
-Reports can be copied and pasted elsewhere along with headers and also directly printed.
+## Features
 
-For any suggestions and customizations please drop in a mail at info@imaginate-solutions.com
+- Export WooCommerce orders to CSV for spreadsheets, accounting, reporting, and order archives.
+- Export WooCommerce orders to Excel (XLSX) with selected order columns and customer details.
+- Export WooCommerce orders to PDF for printable order reports and shareable summaries.
+- Export WooCommerce orders to XML or JSON for structured data workflows and integrations.
+- Filter order exports by order status and order date range.
+- Export customer details, billing details, shipping details, order totals, payment details, coupon codes, and product line items.
+- Select or deselect individual WooCommerce export columns.
+- Drag export columns into a custom sequence so the exported file matches the admin-selected column order.
+- Export product names, SKUs, quantities, and line totals from WooCommerce orders.
+- Export button appears beside the WooCommerce Add order button.
+- Review selected filters, format, and columns before starting the export.
+- Batch export processing with progress feedback.
+- Compatible with WooCommerce HPOS / custom order tables.
+- PDF support keeps the vendor package smaller by using a reduced DejaVu Sans Condensed font set.
 
-Pro version of the plugin can be found at **[WooCommerce Export Orders Pro](http://www.imaginate-solutions.com/downloads/woocommerce-export-orders/)**
+## Common Use Cases
 
-== Installation ==
+- Create WooCommerce order reports for accounting or bookkeeping.
+- Export WooCommerce orders by date range for monthly, weekly, or custom reports.
+- Export completed, processing, pending, refunded, or other WooCommerce order statuses.
+- Export customer email, phone, billing address, and shipping address details.
+- Export WooCommerce order items, product SKUs, quantities, and product totals.
+- Generate CSV or Excel files for analysis in spreadsheet software.
+- Generate PDF order reports for internal review or sharing.
+- Use XML or JSON order exports for structured data handling.
 
-= Automatic Installation =
+## Export Fields
 
-Automatic installation is the easiest option as WordPress handles the file transfers itself and you don’t need to leave your web browser. To do an automatic install of WooCommerce Export Orders, log in to your WordPress dashboard, navigate to the Plugins menu and click Add New.
+- Order information: Order ID, status, date, totals, discount, tax, shipping total, payment method, transaction ID, customer note, and coupon codes.
+- Customer and billing information: Customer ID, email, phone, billing name, company, address, city, state, postcode, and country.
+- Shipping information: Shipping name, company, address, city, state, postcode, country, and shipping method.
+- Product information: Product names, SKUs, quantities, and line totals.
 
-In the search field type “WooCommerce Export Orders” and click Search Plugins. Once you’ve found our plugin you can view details about it such as the the point release, rating and description. Most importantly of course, you can install it by simply clicking “Install Now”.
+## Notes
 
-= Manual installation =
+The PDF export uses a reduced font bundle to keep plugin size lower. This is suitable for normal Latin text exports. Stores that require broader multilingual PDF coverage may need to restore additional mPDF fonts and update the mPDF font configuration.
 
-The manual installation method involves downloading our eCommerce plugin and uploading it to your webserver via your favourite FTP application. The WordPress codex contains [instructions on how to do this here](http://codex.wordpress.org/Managing_Plugins#Manual_Plugin_Installation).
+## Changelog
 
-== Screenshots ==
+### 2.0.0
 
-1. Export Order Dashboard
-
-== Changelog ==
-
-= 1.0 =
-* Initial Launch Version
-
-== Frequently Asked Questions ==
-
-= Does it support without WooCommerce ? =
-
-No, this plugin requires WooCommerce to be installed
-
-== Upgrade Notice ==
-
-Backup your store before upgrading the plugin
+- Added CSV, XLSX, PDF, XML, and JSON export format options.
+- Added selectable export columns grouped by Order Info, Customer, Shipping, and Products.
+- Added draggable export column ordering so exported files match the admin-selected sequence.
+- Moved the Export Orders button beside the WooCommerce Add order button.
+- Added batch export processing with progress feedback.
+- Added WooCommerce HPOS / custom order table compatibility.
+- Optimized bundled PDF fonts to reduce plugin package size while keeping PDF export support.
+- Updated admin UI styling and export confirmation flow.

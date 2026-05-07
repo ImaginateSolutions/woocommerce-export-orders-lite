@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'EOWC_VERSION', '1.0.0' );
+define( 'EOWC_VERSION', '2.0.0' );
 define( 'EOWC_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 define( 'EOWC_PLUGIN_FILE', __FILE__ );
 define( 'EOWC_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
