@@ -19,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<p class="eowc-subtitle"><?php esc_html_e( 'Filter, configure and download your WooCommerce orders.', 'woocommerce-export-orders' ); ?></p>
 	</div>
 </div>
+<hr class="wp-header-end">
 
 <form id="eowc-export-form" class="eowc-form" novalidate>
 
