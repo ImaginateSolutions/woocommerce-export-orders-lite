@@ -31,6 +31,10 @@ class EOWC_Admin {
 		add_action( 'admin_head', array( $this, 'add_order_page_export_button' ) );
 		add_action( 'wp_ajax_eowc_export_orders', array( $this, 'handle_export_orders' ) );
 		add_action( 'admin_post_eowc_download_file', array( $this, 'download_file' ) );
+		add_action( 'admin_init', array( $this, 'save_installation_date' ) );
+		add_action( 'admin_notices', array( $this, 'show_review_notice' ) );
+		add_action( 'wp_ajax_eowc_dismiss_review_notice', array( $this, 'eowc_dismiss_review_notice' ) );	
+
 	}
 
 	/**
@@ -795,4 +799,76 @@ class EOWC_Admin {
 		readfile( $file_path );
 		exit;
 	}
+
+	/**
+	 * Save options
+	 */
+	public function save_installation_date() {
+		if ( ! get_option( 'eowc_install_date' ) ) {
+			update_option( 'eowc_install_date', current_time( 'timestamp' ) );
+		}
+	}
+
+	/**
+	 * Show Review Notice
+	 */
+	public function show_review_notice() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$screen = get_current_screen();
+
+		if ( isset( $screen->id ) && ( 'woocommerce_page_wc-orders' === $screen->id || 'toplevel_page_eowc-export-orders' === $screen->id ) ) {
+
+			if ( get_option( 'eowc_review_notice_dismissed' ) ) {
+				return;
+			}
+
+			$install_time = get_option( 'eowc_install_date', 0 );
+			if ( ! $install_time || ( time() - intval( $install_time ) < 604800 ) ) { // 604800 = 1 week
+				return;
+			}
+
+			$nonce = wp_create_nonce( 'eowc_dismiss_notice_nonce' );
+			?>
+
+			<div class="notice notice-success is-dismissible eowc-review-notice">
+				<p>
+					🎉 <strong>Thanks for using Export Orders For WooCommerce!</strong> 🎉<br><br>
+					We hope it has been helpful! Would you consider taking a moment to <a href="https://wordpress.org/support/plugin/woocommerce-export-orders/reviews/?rate=5#new-post" target="_blank">leave us a 5-star review</a>?<br>
+					Your feedback keeps us going 💖
+				</p>
+			</div>
+			<script>
+				(function($) {
+					$(document).on('click', '.eowc-review-notice .notice-dismiss', function() {
+						$.post(ajaxurl, {
+							action: 'eowc_dismiss_review_notice',
+							_nonce: '<?php echo esc_js($nonce); ?>'
+						});
+					});
+				})(jQuery);
+			</script>
+
+			<?php
+		}
+	}
+
+	/**
+	 * Dismiss review notice.
+	 */
+	public function eowc_dismiss_review_notice() {
+		if ( ! isset( $_POST['_nonce'] ) || ! wp_verify_nonce( $_POST['_nonce'], 'eowc_dismiss_notice_nonce' ) ) {
+			wp_send_json_error( 'Invalid nonce', 403 );
+		}
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( 'Unauthorized', 403 );
+		}
+
+		update_option( 'eowc_review_notice_dismissed', 1 );
+		wp_send_json_success( 'Notice dismissed' );
+	}
+
 }
