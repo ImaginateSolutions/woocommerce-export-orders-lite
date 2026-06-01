@@ -3,7 +3,7 @@ Contributors: ImagiSol, dhruvin
 Donate link: https://paypal.me/DhruvinS?_ga=1.134259249.1705473128.1507170477
 Tags: woocommerce, export orders, order export, csv export, excel export, pdf export
 Requires at least: 3.0.1
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 8.0
 Stable tag: 2.0.0
 License: GPLv2 or later
@@ -82,9 +82,10 @@ The manual installation method involves downloading the plugin and uploading it 
 
 == Screenshots ==
 
-1. Export Orders button beside the WooCommerce Add order button.
+1. Export options with date range selection.
 2. Export settings modal with status/date filters, format selection, and draggable export columns.
 3. Confirmation screen showing selected filters and selected columns before export.
+4. Export Orders button beside the WooCommerce Add order button.
 
 == Changelog ==
 
