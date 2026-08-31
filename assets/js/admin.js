@@ -206,14 +206,16 @@ jQuery(function ($) {
     /* =========================================================
        Export (batch)
     ========================================================= */
-    let offset = 0;
+   let offset = 0;
     let totalProcessed = 0;
     let totalOrders = 0;
+    let currentExportId = ''; // Holds batch ID across requests
 
     $('#eowc-export-form').on('submit', function (e) {
         e.preventDefault();
         totalProcessed = 0;
         offset = 0;
+        currentExportId = 'export_' + Date.now(); // Generate unique ID per export session
 
         $('.eowc-overlay').fadeIn(200);
         setProgress(0, 'Starting export…');
@@ -224,7 +226,7 @@ jQuery(function ($) {
     function startBatch() {
         const formData = $('#eowc-export-form').serializeArray();
         let dataObj = {};
-        console.log(formData);
+
         formData.forEach(function (f) {
             if (f.name === 'eowc_columns[]') {
                 if (!dataObj.eowc_columns) dataObj.eowc_columns = [];
@@ -232,12 +234,11 @@ jQuery(function ($) {
             } else if (f.name === 'eowc_status[]') {
                 if (!dataObj.eowc_status) dataObj.eowc_status = [];
                 dataObj.eowc_status.push(f.value);
-            }
-            else {
+            } else {
                 dataObj[f.name] = f.value;
             }
         });
-        console.log(dataObj);
+
         $.ajax({
             url: eowc_export_orders_params.ajax_url,
             type: 'POST',
@@ -245,6 +246,7 @@ jQuery(function ($) {
                 action: 'eowc_export_orders',
                 nonce: eowc_export_orders_params.nonce,
                 offset: offset,
+                export_id: currentExportId, // Pass consistent ID
                 ...dataObj,
             },
             success: function (res) {

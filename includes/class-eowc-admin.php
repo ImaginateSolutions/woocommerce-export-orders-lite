@@ -27,7 +27,7 @@ class EOWC_Admin {
 		add_filter( 'admin_enqueue_scripts', array( $this, 'export_enqueue_scripts' ) );
 		add_filter( 'admin_menu', array( $this, 'order_export_page' ) );
 		add_action( 'admin_footer', array( $this, 'render_export_modal' ) );
-		// 	add_action( 'woocommerce_order_list_table_extra_tablenav', array( $this, 'add_export_button' ), 20, 1 );
+		// add_action( 'woocommerce_order_list_table_extra_tablenav', array( $this, 'add_export_button' ), 20, 1 );
 		add_action( 'admin_head', array( $this, 'add_order_page_export_button' ) );
 		add_action( 'wp_ajax_eowc_export_orders', array( $this, 'handle_export_orders' ) );
 		add_action( 'admin_post_eowc_download_file', array( $this, 'download_file' ) );
@@ -189,6 +189,8 @@ class EOWC_Admin {
 		$offset = intval( $_POST['offset'] ?? 0 );
 		$limit  = 100;
 
+		// Use a unique session key sent from JS to keep the file name static across batches.
+		$export_id     = isset( $_POST['export_id'] ) ? sanitize_file_name( wp_unslash( $_POST['export_id'] ) ) : date( 'YmdHis' );
 		$raw_status    = isset( $_POST['eowc_status'] ) ? wp_unslash( $_POST['eowc_status'] ) : ''; // phpcs:ignore
 		$status        = is_array( $raw_status ) ? array_map( 'sanitize_text_field', $raw_status ) : ( $raw_status ? array( sanitize_text_field( $raw_status ) ) : array() );
 		$date_from     = isset( $_POST['eowc_date_from'] ) ? sanitize_text_field( wp_unslash( $_POST['eowc_date_from'] ) ) : '';
@@ -204,7 +206,6 @@ class EOWC_Admin {
 
 		// === 2. Map column keys to output labels and value callbacks.
 		$fields_map = array(
-			// Order Info.
 			'order_id'            => array(
 				'Order ID',
 				function ( $order ) {
@@ -213,166 +214,162 @@ class EOWC_Admin {
 			'order_status'        => array(
 				'Status',
 				function ( $order ) {
-									return wc_get_order_status_name( $order->get_status() ); },
+										return wc_get_order_status_name( $order->get_status() ); },
 			),
 			'order_date'          => array(
 				'Order Date',
 				function ( $order ) {
-									return $order->get_date_created() ? $order->get_date_created()->date( 'Y-m-d H:i:s' ) : ''; },
+										return $order->get_date_created() ? $order->get_date_created()->date( 'Y-m-d H:i:s' ) : ''; },
 			),
 			'order_total'         => array(
 				'Order Total',
 				function ( $order ) {
-									return wc_format_decimal( $order->get_total(), 2 ); },
+										return wc_format_decimal( $order->get_total(), 2 ); },
 			),
 			'order_subtotal'      => array(
 				'Subtotal',
 				function ( $order ) {
-									return wc_format_decimal( $order->get_subtotal(), 2 ); },
+										return wc_format_decimal( $order->get_subtotal(), 2 ); },
 			),
 			'order_discount'      => array(
 				'Discount',
 				function ( $order ) {
-									return wc_format_decimal( $order->get_discount_total(), 2 ); },
+										return wc_format_decimal( $order->get_discount_total(), 2 ); },
 			),
 			'order_tax'           => array(
 				'Tax',
 				function ( $order ) {
-									return wc_format_decimal( $order->get_total_tax(), 2 ); },
+										return wc_format_decimal( $order->get_total_tax(), 2 ); },
 			),
 			'shipping_total'      => array(
 				'Shipping Total',
 				function ( $order ) {
-									return wc_format_decimal( $order->get_shipping_total(), 2 ); },
+										return wc_format_decimal( $order->get_shipping_total(), 2 ); },
 			),
 			'payment_method'      => array(
 				'Payment Method',
 				function ( $order ) {
-									return $order->get_payment_method_title(); },
+										return $order->get_payment_method_title(); },
 			),
 			'transaction_id'      => array(
 				'Transaction ID',
 				function ( $order ) {
-									return $order->get_transaction_id(); },
+										return $order->get_transaction_id(); },
 			),
 			'customer_note'       => array(
 				'Customer Note',
 				function ( $order ) {
-									return $order->get_customer_note(); },
+										return $order->get_customer_note(); },
 			),
 			'coupon_codes'        => array(
 				'Coupon Codes',
 				function ( $order ) {
-									return implode( ', ', $order->get_coupon_codes() ); },
+										return implode( ', ', $order->get_coupon_codes() ); },
 			),
-
-			// Customer.
 			'customer_id'         => array(
 				'Customer ID',
 				function ( $order ) {
-									return $order->get_customer_id(); },
+										return $order->get_customer_id(); },
 			),
 			'customer_email'      => array(
 				'Email',
 				function ( $order ) {
-									return $order->get_billing_email(); },
+										return $order->get_billing_email(); },
 			),
 			'customer_phone'      => array(
 				'Phone',
 				function ( $order ) {
-									return $order->get_billing_phone(); },
+										return $order->get_billing_phone(); },
 			),
 			'billing_first_name'  => array(
 				'First Name (Billing)',
 				function ( $order ) {
-									return $order->get_billing_first_name(); },
+										return $order->get_billing_first_name(); },
 			),
 			'billing_last_name'   => array(
 				'Last Name (Billing)',
 				function ( $order ) {
-									return $order->get_billing_last_name(); },
+										return $order->get_billing_last_name(); },
 			),
 			'billing_company'     => array(
 				'Company (Billing)',
 				function ( $order ) {
-									return $order->get_billing_company(); },
+										return $order->get_billing_company(); },
 			),
 			'billing_address_1'   => array(
 				'Address 1 (Billing)',
 				function ( $order ) {
-									return $order->get_billing_address_1(); },
+										return $order->get_billing_address_1(); },
 			),
 			'billing_address_2'   => array(
 				'Address 2 (Billing)',
 				function ( $order ) {
-									return $order->get_billing_address_2(); },
+										return $order->get_billing_address_2(); },
 			),
 			'billing_city'        => array(
 				'City (Billing)',
 				function ( $order ) {
-									return $order->get_billing_city(); },
+										return $order->get_billing_city(); },
 			),
 			'billing_state'       => array(
 				'State (Billing)',
 				function ( $order ) {
-									return $order->get_billing_state(); },
+										return $order->get_billing_state(); },
 			),
 			'billing_postcode'    => array(
 				'Postcode (Billing)',
 				function ( $order ) {
-									return $order->get_billing_postcode(); },
+										return $order->get_billing_postcode(); },
 			),
 			'billing_country'     => array(
 				'Country (Billing)',
 				function ( $order ) {
-									return $order->get_billing_country(); },
+										return $order->get_billing_country(); },
 			),
-
-			// Shipping.
 			'shipping_first_name' => array(
 				'First Name (Shipping)',
 				function ( $order ) {
-									return $order->get_shipping_first_name(); },
+										return $order->get_shipping_first_name(); },
 			),
 			'shipping_last_name'  => array(
 				'Last Name (Shipping)',
 				function ( $order ) {
-									return $order->get_shipping_last_name(); },
+										return $order->get_shipping_last_name(); },
 			),
 			'shipping_company'    => array(
 				'Company (Shipping)',
 				function ( $order ) {
-									return $order->get_shipping_company(); },
+										return $order->get_shipping_company(); },
 			),
 			'shipping_address_1'  => array(
 				'Address 1 (Shipping)',
 				function ( $order ) {
-									return $order->get_shipping_address_1(); },
+										return $order->get_shipping_address_1(); },
 			),
 			'shipping_address_2'  => array(
 				'Address 2 (Shipping)',
 				function ( $order ) {
-									return $order->get_shipping_address_2(); },
+										return $order->get_shipping_address_2(); },
 			),
 			'shipping_city'       => array(
 				'City (Shipping)',
 				function ( $order ) {
-									return $order->get_shipping_city(); },
+										return $order->get_shipping_city(); },
 			),
 			'shipping_state'      => array(
 				'State (Shipping)',
 				function ( $order ) {
-									return $order->get_shipping_state(); },
+										return $order->get_shipping_state(); },
 			),
 			'shipping_postcode'   => array(
 				'Postcode (Shipping)',
 				function ( $order ) {
-									return $order->get_shipping_postcode(); },
+										return $order->get_shipping_postcode(); },
 			),
 			'shipping_country'    => array(
 				'Country (Shipping)',
 				function ( $order ) {
-									return $order->get_shipping_country(); },
+										return $order->get_shipping_country(); },
 			),
 			'shipping_method'     => array(
 				'Shipping Method',
@@ -384,8 +381,6 @@ class EOWC_Admin {
 					return implode( ', ', $methods );
 				},
 			),
-
-			// Products.
 			'product_names'       => array(
 				'Product Names',
 				function ( $order ) {
@@ -457,18 +452,15 @@ class EOWC_Admin {
 		$total     = $result->total;
 
 		if ( empty( $total ) ) {
-			wp_send_json_error(
-				array(
-					'message' => 'Nothing to export. Please, adjust your filters',
-				)
-			);
+			wp_send_json_error( array( 'message' => 'Nothing to export. Please, adjust your filters.' ) );
 		}
 
-		$upload_dir      = wp_upload_dir();
-		$user_id         = get_current_user_id();
-		$timestamp       = date( 'YmdHis' );
-		$filename        = "eowc-orders-{$user_id}-{$export_format}-{$timestamp}.";
-		$extensions      = array(
+		$upload_dir = wp_upload_dir();
+		$user_id    = get_current_user_id();
+
+		// Stable filename based on unique batch ID.
+		$filename   = "eowc-orders-{$user_id}-{$export_id}";
+		$extensions = array(
 			'csv'  => 'csv',
 			'json' => 'json',
 			'xlsx' => 'xlsx',
@@ -477,17 +469,17 @@ class EOWC_Admin {
 		);
 
 		$file_ext  = isset( $extensions[ $export_format ] ) ? $extensions[ $export_format ] : 'txt';
-		$file_url  = $upload_dir['baseurl'] . "/{$filename}{$file_ext}";
-		$file_path = $upload_dir['basedir'] . "/{$filename}{$file_ext}";
-		$is_new    = ! file_exists( $file_path ) || 0 === $offset;
+		$file_url  = $upload_dir['baseurl'] . "/{$filename}.{$file_ext}";
+		$file_path = $upload_dir['basedir'] . "/{$filename}.{$file_ext}";
+		$is_new    = ( 0 === $offset ) || ! file_exists( $file_path );
 
-		// ---- EXPORT FORMAT HANDLING ----.
+		// ---- EXPORT FORMAT HANDLING ----
 
 		if ( 'csv' === $export_format ) {
 			// phpcs:ignore
 			$file = fopen( $file_path, $is_new ? 'w' : 'a' );
 			if ( $is_new ) {
-				fwrite( $file, "\xEF\xBB\xBF" );
+				fwrite( $file, "\xEF\xBB\xBF" ); // UTF-8 BOM
 				fputcsv( $file, $headers );
 			}
 
@@ -503,7 +495,6 @@ class EOWC_Admin {
 			fclose( $file );
 
 		} elseif ( 'json' === $export_format ) {
-			// Accumulate rows.
 			$new_rows = array();
 			foreach ( $order_ids as $order_id ) {
 				$order = wc_get_order( $order_id );
@@ -513,28 +504,19 @@ class EOWC_Admin {
 				}
 				$new_rows[] = $row;
 			}
-			// Write JSON (append if possible? else rewrite, for simplicity we build the complete json!).
-			if ( $is_new ) {
-				// phpcs:ignore
-				file_put_contents( $file_path, wp_json_encode( $new_rows, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE ) );
-			} else {
-				// Read old, merge, then rewrite.
-				$existing = array();
-				if ( file_exists( $file_path ) ) {
-					// phpcs:ignore
-					$existing = file_get_contents( $file_path ) ? json_decode( file_get_contents( $file_path ), true ) : array();
-				}
-				$all_rows = array_merge( $existing, $new_rows );
-				// phpcs:ignore
-				file_put_contents( $file_path, wp_json_encode( $all_rows, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE ) );
-			}
-		} elseif ( 'xml' === $export_format ) {
-			// Each chunk: read existing, append, re-save (or fully write if first batch).
-			$xml_root_name   = 'orders';
-			$xml_file_exists = file_exists( $file_path ) && ! $is_new;
 
-			if ( $xml_file_exists ) {
-				// Load existing XML.
+			$existing = array();
+			if ( ! $is_new && file_exists( $file_path ) ) {
+				$raw_json = file_get_contents( $file_path );
+				$existing = $raw_json ? json_decode( $raw_json, true ) : array();
+			}
+			$all_rows = array_merge( (array) $existing, $new_rows );
+			file_put_contents( $file_path, wp_json_encode( $all_rows, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE ) );
+
+		} elseif ( 'xml' === $export_format ) {
+			$xml_root_name = 'orders';
+
+			if ( ! $is_new && file_exists( $file_path ) ) {
 				$xml = \simplexml_load_file( $file_path );
 			} else {
 				$xml = new \SimpleXMLElement( "<?xml version=\"1.0\" encoding=\"UTF-8\"?><{$xml_root_name}></{$xml_root_name}>" );
@@ -544,26 +526,20 @@ class EOWC_Admin {
 				$order     = wc_get_order( $order_id );
 				$order_xml = $xml->addChild( 'order' );
 				foreach ( $column_callbacks as $i => $cb ) {
-					// Create valid XML element names.
 					$slug = preg_replace( '/[^a-z0-9_]/i', '_', strtolower( $headers[ $i ] ) );
 					$order_xml->addChild( $slug, htmlspecialchars( is_callable( $cb ) ? call_user_func( $cb, $order ) : '', ENT_QUOTES | ENT_XML1, 'UTF-8' ) );
 				}
 			}
-			$xml_string = $xml->asXML();
-			// phpcs:ignore
-			file_put_contents( $file_path, $xml_string );
+			file_put_contents( $file_path, $xml->asXML() );
+
 		} elseif ( 'xlsx' === $export_format ) {
-			// Ensure PhpSpreadsheet is available.
 			if ( ! class_exists( '\PhpOffice\PhpSpreadsheet\Spreadsheet' ) ) {
-				require_once EOWC_PLUGIN_PATH . '/vendor/autoload.php'; // Adjust path as needed.
+				require_once EOWC_PLUGIN_PATH . '/vendor/autoload.php';
 			}
 
-			// First batch: New or open, else open and append rows.
-			$spreadsheet = null;
 			if ( $is_new || ! file_exists( $file_path ) ) {
-				$spreadsheet = new Spreadsheet();
+				$spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
 				$sheet       = $spreadsheet->getActiveSheet();
-				// Set header row.
 				foreach ( $headers as $col_idx => $title ) {
 					$sheet->setCellValueByColumnAndRow( $col_idx + 1, 1, $title );
 					$column_letter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex( $col_idx + 1 );
@@ -578,7 +554,6 @@ class EOWC_Admin {
 				$row_start   = $sheet->getHighestRow() + 1;
 			}
 
-			// Write data rows.
 			foreach ( $order_ids as $i => $order_id ) {
 				$order = wc_get_order( $order_id );
 				foreach ( $column_callbacks as $col_idx => $cb ) {
@@ -588,155 +563,102 @@ class EOWC_Admin {
 			}
 
 			$sheet->getStyle( '1:1' )->getFont()->setBold( true );
-			$sheet->getStyle( '1:1' )->getAlignment()->setHorizontal(
-				\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
-			);
+			$sheet->getStyle( '1:1' )->getAlignment()->setHorizontal( \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER );
 
-			// Write file.
-			$writer = new Xlsx( $spreadsheet );
+			$writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx( $spreadsheet );
 			$writer->save( $file_path );
-		} elseif ( 'pdf' === $export_format ) {
 
+		} elseif ( 'pdf' === $export_format ) {
 			if ( ! class_exists( '\Mpdf\Mpdf' ) ) {
 				require_once EOWC_PLUGIN_PATH . '/vendor/autoload.php';
 			}
 
-			$args_full           = $args;
-			$args_full['offset'] = 0;
-			$args_full['limit']  = $total;
-
-			$result_full   = wc_get_orders( $args_full );
-			$all_order_ids = $result_full->orders;
-
-			/**
-			 * PERFORMANCE FIX 1:
-			 * Prepare all order data once
-			 */
+			// Store rows temporarily until batch finishes, then render final PDF on the last chunk.
+			$tmp_json_path = $file_path . '.tmp.json';
 			$prepared_rows = array();
 
-			foreach ( $all_order_ids as $order_id ) {
-
+			foreach ( $order_ids as $order_id ) {
 				$order = wc_get_order( $order_id );
-
 				if ( ! $order ) {
 					continue;
 				}
 
 				$row = array();
-
 				foreach ( $column_callbacks as $cb ) {
 					$row[] = is_callable( $cb ) ? call_user_func( $cb, $order ) : '';
 				}
-
 				$prepared_rows[] = $row;
 			}
 
-			/**
-			 * Config
-			 */
-			$max_columns_per_page = 8;
-			$max_rows_per_page    = 50;
-
-			$column_indexes = array_keys( $headers );
-			$column_chunks  = array_chunk( $column_indexes, $max_columns_per_page );
-			$row_batches    = array_chunk( $prepared_rows, $max_rows_per_page );
-
-			/**
-			 * PERFORMANCE FIX 2:
-			 * Faster mPDF config
-			 */
-			$mpdf_temp_dir = trailingslashit( $upload_dir['basedir'] ) . 'eowc-mpdf-tmp';
-			if ( ! wp_mkdir_p( $mpdf_temp_dir ) ) {
-				wp_send_json_error( array( 'message' => 'Unable to create a temporary folder for PDF export.' ) );
+			$existing_rows = array();
+			if ( ! $is_new && file_exists( $tmp_json_path ) ) {
+				$existing_rows = json_decode( file_get_contents( $tmp_json_path ), true ) ?: array();
 			}
 
-			$mpdf = new \Mpdf\Mpdf(
-				array(
-					'mode'                 => 'utf-8',
-					'format'               => 'A4-L',
-					'tempDir'              => $mpdf_temp_dir,
-					'fontDir'              => array( EOWC_PLUGIN_PATH . 'vendor/mpdf/mpdf/ttfonts' ),
-					'fontdata'             => array(
-						'dejavusanscondensed' => array(
-							'R'         => 'DejaVuSansCondensed.ttf',
-							'B'         => 'DejaVuSansCondensed-Bold.ttf',
-							'I'         => 'DejaVuSansCondensed-Oblique.ttf',
-							'BI'        => 'DejaVuSansCondensed-BoldOblique.ttf',
-							'useOTL'    => 0xFF,
-							'useKashida' => 75,
-						),
-						'sun-exta'             => array(
-							'R' => 'Sun-ExtA.ttf',
-						),
-						'sun-extb'             => array(
-							'R' => 'Sun-ExtB.ttf',
-						),
-					),
-					'default_font'         => 'dejavusanscondensed',
-					'backupSubsFont'       => array( 'sun-exta' ),
-					'backupSIPFont'        => 'sun-extb',
-					'simpleTables'         => true,
-					'packTableData'        => true,
-					'useSubstitutions'     => true,
-					'shrink_tables_to_fit' => 1,
-				)
-			);
+			$all_rows = array_merge( $existing_rows, $prepared_rows );
+			file_put_contents( $tmp_json_path, wp_json_encode( $all_rows ) );
 
-			$page_number = 1;
+			// Generate PDF only on the final batch call.
+			if ( ( $offset + $limit ) >= $total || empty( $order_ids ) ) {
+				$max_columns_per_page = 8;
+				$max_rows_per_page    = 50;
 
-			foreach ( $row_batches as $batch_index => $current_batch ) {
+				$column_indexes = array_keys( $headers );
+				$column_chunks  = array_chunk( $column_indexes, $max_columns_per_page );
+				$row_batches    = array_chunk( $all_rows, $max_rows_per_page );
 
-				foreach ( $column_chunks as $chunk_index => $chunk_indexes ) {
+				$mpdf_temp_dir = trailingslashit( $upload_dir['basedir'] ) . 'eowc-mpdf-tmp';
+				wp_mkdir_p( $mpdf_temp_dir );
 
-					$mpdf->AddPage();
+				$mpdf = new \Mpdf\Mpdf(
+					array(
+						'mode'                 => 'utf-8',
+						'format'               => 'A4-L',
+						'tempDir'              => $mpdf_temp_dir,
+						'default_font'         => 'dejavusanscondensed',
+						'simpleTables'         => true,
+						'packTableData'        => true,
+						'useSubstitutions'     => true,
+						'shrink_tables_to_fit' => 1,
+					)
+				);
 
-					$html  = '<h3>Orders Export - Page ' . $page_number . '</h3>';
-					$html .= '<table border="1" cellpadding="4" cellspacing="0" width="100%" style="border-collapse:collapse;">';
-
-					/**
-					 * Header
-					 */
-					$html .= '<thead><tr>';
-
-					foreach ( $chunk_indexes as $col_index ) {
-						$html .= '<th style="background:#f2f2f2;">' . esc_html( $headers[ $col_index ] ) . '</th>';
-					}
-
-					$html .= '</tr></thead><tbody>';
-
-					/**
-					 * Rows
-					 */
-					foreach ( $current_batch as $row ) {
-
-						$html .= '<tr>';
-
+				$page_number = 1;
+				foreach ( $row_batches as $batch_index => $current_batch ) {
+					foreach ( $column_chunks as $chunk_indexes ) {
+						$mpdf->AddPage();
+						$html  = '<h3>Orders Export - Page ' . $page_number . '</h3>';
+						$html .= '<table border="1" cellpadding="4" cellspacing="0" width="100%" style="border-collapse:collapse;">';
+						$html .= '<thead><tr>';
 						foreach ( $chunk_indexes as $col_index ) {
-							$html .= '<td>' . esc_html( $row[ $col_index ] ) . '</td>';
+							$html .= '<th style="background:#f2f2f2;">' . esc_html( $headers[ $col_index ] ) . '</th>';
 						}
+						$html .= '</tr></thead><tbody>';
 
-						$html .= '</tr>';
+						foreach ( $current_batch as $row ) {
+							$html .= '<tr>';
+							foreach ( $chunk_indexes as $col_index ) {
+								$html .= '<td>' . esc_html( $row[ $col_index ] ) . '</td>';
+							}
+							$html .= '</tr>';
+						}
+						$html .= '</tbody></table>';
+
+						$mpdf->WriteHTML( $html );
+						++$page_number;
 					}
+				}
 
-					$html .= '</tbody></table>';
-
-					$mpdf->WriteHTML( $html );
-
-					++$page_number;
+				$mpdf->Output( $file_path, 'F' );
+				if ( file_exists( $tmp_json_path ) ) {
+					unlink( $tmp_json_path );
 				}
 			}
-
-			$mpdf->Output( $file_path, 'F' );
-
-		} else {
-			// Placeholder for more formats.
-			// You can add XML, XLSX, PDF code here (libraries needed for PDF/XLSX).
-			// phpcs:ignore
-			file_put_contents( $file_path, "Export format '{$export_format}' is not supported yet." );
 		}
 
 		$download_url = admin_url( 'admin-post.php?action=eowc_download_file&file=' . basename( $file_path ) . '&nonce=' . wp_create_nonce( 'eowc_download_file' ) );
-		// === 7. Done/next batch.
+
+		// === 5. Done/next batch.
 		if ( empty( $order_ids ) || ( $offset + $limit ) >= $total ) {
 			wp_send_json_success(
 				array(
