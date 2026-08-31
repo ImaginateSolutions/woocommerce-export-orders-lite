@@ -27,14 +27,14 @@ class EOWC_Admin {
 		add_filter( 'admin_enqueue_scripts', array( $this, 'export_enqueue_scripts' ) );
 		add_filter( 'admin_menu', array( $this, 'order_export_page' ) );
 		add_action( 'admin_footer', array( $this, 'render_export_modal' ) );
+		// phpcs:ignore
 		// add_action( 'woocommerce_order_list_table_extra_tablenav', array( $this, 'add_export_button' ), 20, 1 );
 		add_action( 'admin_head', array( $this, 'add_order_page_export_button' ) );
 		add_action( 'wp_ajax_eowc_export_orders', array( $this, 'handle_export_orders' ) );
 		add_action( 'admin_post_eowc_download_file', array( $this, 'download_file' ) );
 		add_action( 'admin_init', array( $this, 'save_installation_date' ) );
 		add_action( 'admin_notices', array( $this, 'show_review_notice' ) );
-		add_action( 'wp_ajax_eowc_dismiss_review_notice', array( $this, 'eowc_dismiss_review_notice' ) );	
-
+		add_action( 'wp_ajax_eowc_dismiss_review_notice', array( $this, 'eowc_dismiss_review_notice' ) );
 	}
 
 	/**
@@ -125,11 +125,8 @@ class EOWC_Admin {
 	public function add_order_page_export_button() {
 		global $pagenow;
 
-		$is_orders_page = (
-			'admin.php' === $pagenow
-			&& isset( $_GET['page'] )
-			&& 'wc-orders' === $_GET['page']
-		);
+		// phpcs:ignore
+		$is_orders_page = ( 'admin.php' === $pagenow && isset( $_GET['page'] ) && 'wc-orders' === $_GET['page'] );
 
 		if ( ! $is_orders_page ) {
 			return;
@@ -190,7 +187,7 @@ class EOWC_Admin {
 		$limit  = 100;
 
 		// Use a unique session key sent from JS to keep the file name static across batches.
-		$export_id     = isset( $_POST['export_id'] ) ? sanitize_file_name( wp_unslash( $_POST['export_id'] ) ) : date( 'YmdHis' );
+		$export_id     = isset( $_POST['export_id'] ) ? sanitize_file_name( wp_unslash( $_POST['export_id'] ) ) : gmdate( 'YmdHis' );
 		$raw_status    = isset( $_POST['eowc_status'] ) ? wp_unslash( $_POST['eowc_status'] ) : ''; // phpcs:ignore
 		$status        = is_array( $raw_status ) ? array_map( 'sanitize_text_field', $raw_status ) : ( $raw_status ? array( sanitize_text_field( $raw_status ) ) : array() );
 		$date_from     = isset( $_POST['eowc_date_from'] ) ? sanitize_text_field( wp_unslash( $_POST['eowc_date_from'] ) ) : '';
@@ -479,7 +476,8 @@ class EOWC_Admin {
 			// phpcs:ignore
 			$file = fopen( $file_path, $is_new ? 'w' : 'a' );
 			if ( $is_new ) {
-				fwrite( $file, "\xEF\xBB\xBF" ); // UTF-8 BOM
+				// phpcs:ignore
+				fwrite( $file, "\xEF\xBB\xBF" ); // UTF-8 BOM.
 				fputcsv( $file, $headers );
 			}
 
@@ -507,10 +505,12 @@ class EOWC_Admin {
 
 			$existing = array();
 			if ( ! $is_new && file_exists( $file_path ) ) {
+				// phpcs:ignore
 				$raw_json = file_get_contents( $file_path );
 				$existing = $raw_json ? json_decode( $raw_json, true ) : array();
 			}
 			$all_rows = array_merge( (array) $existing, $new_rows );
+			// phpcs:ignore
 			file_put_contents( $file_path, wp_json_encode( $all_rows, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE ) );
 
 		} elseif ( 'xml' === $export_format ) {
@@ -530,6 +530,7 @@ class EOWC_Admin {
 					$order_xml->addChild( $slug, htmlspecialchars( is_callable( $cb ) ? call_user_func( $cb, $order ) : '', ENT_QUOTES | ENT_XML1, 'UTF-8' ) );
 				}
 			}
+			// phpcs:ignore
 			file_put_contents( $file_path, $xml->asXML() );
 
 		} elseif ( 'xlsx' === $export_format ) {
@@ -592,10 +593,12 @@ class EOWC_Admin {
 
 			$existing_rows = array();
 			if ( ! $is_new && file_exists( $tmp_json_path ) ) {
+				// phpcs:ignore
 				$existing_rows = json_decode( file_get_contents( $tmp_json_path ), true ) ?: array();
 			}
 
 			$all_rows = array_merge( $existing_rows, $prepared_rows );
+			// phpcs:ignore
 			file_put_contents( $tmp_json_path, wp_json_encode( $all_rows ) );
 
 			// Generate PDF only on the final batch call.
@@ -651,6 +654,7 @@ class EOWC_Admin {
 
 				$mpdf->Output( $file_path, 'F' );
 				if ( file_exists( $tmp_json_path ) ) {
+					// phpcs:ignore
 					unlink( $tmp_json_path );
 				}
 			}
@@ -683,7 +687,7 @@ class EOWC_Admin {
 	}
 
 	/**
-	 * Download the exported file.
+	 * Download the exported file and delete it immediately after transfer.
 	 */
 	public function download_file() {
 
@@ -712,13 +716,31 @@ class EOWC_Admin {
 
 		$mime = mime_content_type( $file_path );
 
+		// Clear output buffers to ensure full stream delivery.
+		if ( ob_get_level() ) {
+			ob_end_clean();
+		}
+
 		header( 'Content-Description: File Transfer' );
 		header( 'Content-Type: ' . $mime );
 		header( 'Content-Disposition: attachment; filename="' . basename( $file_path ) . '"' );
 		header( 'Content-Length: ' . filesize( $file_path ) );
 		header( 'Pragma: public' );
+		header( 'Expires: 0' );
+		header( 'Cache-Control: must-revalidate, post-check=0, pre-check=0' );
+
 		// phpcs:ignore
 		readfile( $file_path );
+
+		// Flush response to client before deleting.
+		flush();
+
+		// Delete the file from the server.
+		if ( file_exists( $file_path ) ) {
+			// phpcs:ignore
+			unlink( $file_path );
+		}
+
 		exit;
 	}
 
@@ -727,6 +749,7 @@ class EOWC_Admin {
 	 */
 	public function save_installation_date() {
 		if ( ! get_option( 'eowc_install_date' ) ) {
+			// phpcs:ignore
 			update_option( 'eowc_install_date', current_time( 'timestamp' ) );
 		}
 	}
@@ -767,7 +790,7 @@ class EOWC_Admin {
 					$(document).on('click', '.eowc-review-notice .notice-dismiss', function() {
 						$.post(ajaxurl, {
 							action: 'eowc_dismiss_review_notice',
-							_nonce: '<?php echo esc_js($nonce); ?>'
+							_nonce: '<?php echo esc_js( $nonce ); ?>'
 						});
 					});
 				})(jQuery);
@@ -781,7 +804,7 @@ class EOWC_Admin {
 	 * Dismiss review notice.
 	 */
 	public function eowc_dismiss_review_notice() {
-		if ( ! isset( $_POST['_nonce'] ) || ! wp_verify_nonce( $_POST['_nonce'], 'eowc_dismiss_notice_nonce' ) ) {
+		if ( ! isset( $_POST['_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_nonce'] ) ), 'eowc_dismiss_notice_nonce' ) ) {
 			wp_send_json_error( 'Invalid nonce', 403 );
 		}
 
@@ -792,5 +815,4 @@ class EOWC_Admin {
 		update_option( 'eowc_review_notice_dismissed', 1 );
 		wp_send_json_success( 'Notice dismissed' );
 	}
-
 }
