@@ -39,6 +39,31 @@ add_action(
 	}
 );
 
+
+register_activation_hook( __FILE__, 'eowc_free_activate' );
+
+/**
+ * Register activation callback.
+ */
+function eowc_free_activate() {
+
+	if ( ! function_exists( 'is_plugin_active' ) ) {
+		require_once ABSPATH . 'wp-admin/includes/plugin.php';
+	}
+
+	$pro_plugin = 'woocommerce-export-orders-pro/woocommerce-export-orders-pro.php';
+
+	if ( is_plugin_active( $pro_plugin ) ) {
+		deactivate_plugins( __FILE__ );
+
+		wp_die(
+			esc_html__( 'WooCommerce Export Orders Pro is already active. Please deactivate the Pro version before activating the free version.', 'woocommerce-export-orders' ),
+			esc_html__( 'Plugin activation failed', 'woocommerce-export-orders' ),
+			array( 'back_link' => true )
+		);
+	}
+}
+
 /**
  * Load main plugin.
  * This file is responsible for initializing the plugin and loading the main plugin class.
