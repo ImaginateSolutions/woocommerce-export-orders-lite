@@ -183,22 +183,43 @@ class EOWC_Admin {
 			wp_send_json_error( 'Unauthorized' );
 		}
 
-		$offset = intval( $_POST['offset'] ?? 0 );
+		$result = self::process_export_batch( wp_unslash( $_POST ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
+		}
+
+		wp_send_json_success( $result );
+	}
+
+	/**
+	 * Process one export batch.
+	 *
+	 * This method is shared by the admin AJAX endpoint and the Abilities API.
+	 *
+	 * @param array $input Export arguments.
+	 * @return array|\WP_Error
+	 */
+	public static function process_export_batch( $input ) {
+
+		$input = is_array( $input ) ? $input : array();
+
+		$offset = absint( $input['offset'] ?? 0 );
 		$limit  = 100;
 
 		// Use a unique session key sent from JS to keep the file name static across batches.
-		$export_id     = isset( $_POST['export_id'] ) ? sanitize_file_name( wp_unslash( $_POST['export_id'] ) ) : gmdate( 'YmdHis' );
-		$raw_status    = isset( $_POST['eowc_status'] ) ? wp_unslash( $_POST['eowc_status'] ) : ''; // phpcs:ignore
+		$export_id     = isset( $input['export_id'] ) ? sanitize_file_name( $input['export_id'] ) : gmdate( 'YmdHis' );
+		$raw_status    = $input['eowc_status'] ?? '';
 		$status        = is_array( $raw_status ) ? array_map( 'sanitize_text_field', $raw_status ) : ( $raw_status ? array( sanitize_text_field( $raw_status ) ) : array() );
-		$date_from     = isset( $_POST['eowc_date_from'] ) ? sanitize_text_field( wp_unslash( $_POST['eowc_date_from'] ) ) : '';
-		$date_to       = isset( $_POST['eowc_date_to'] ) ? sanitize_text_field( wp_unslash( $_POST['eowc_date_to'] ) ) : '';
-		$export_format = isset( $_POST['eowc_export_format'] ) ? sanitize_text_field( wp_unslash( $_POST['eowc_export_format'] ) ) : 'csv';
+		$date_from     = isset( $input['eowc_date_from'] ) ? sanitize_text_field( $input['eowc_date_from'] ) : '';
+		$date_to       = isset( $input['eowc_date_to'] ) ? sanitize_text_field( $input['eowc_date_to'] ) : '';
+		$export_format = isset( $input['eowc_export_format'] ) ? sanitize_text_field( $input['eowc_export_format'] ) : 'csv';
 
 		// === 1. Get selected columns.
-		$selected_columns = isset( $_POST['eowc_columns'] ) && is_array( $_POST['eowc_columns'] ) ? array_map( 'sanitize_text_field', wp_unslash( $_POST['eowc_columns'] ) ) : array();
+		$selected_columns = isset( $input['eowc_columns'] ) && is_array( $input['eowc_columns'] ) ? array_map( 'sanitize_text_field', $input['eowc_columns'] ) : array();
 
 		if ( empty( $selected_columns ) ) {
-			wp_send_json_error( array( 'message' => 'No columns specified.' ) );
+			return new \WP_Error( 'eowc_missing_columns', 'No columns specified.' );
 		}
 
 		// === 2. Map column keys to output labels and value callbacks.
@@ -431,7 +452,7 @@ class EOWC_Admin {
 			}
 		}
 		if ( empty( $headers ) ) {
-			wp_send_json_error( array( 'message' => 'Invalid columns specified.' ) );
+			return new \WP_Error( 'eowc_invalid_columns', 'Invalid columns specified.' );
 		}
 
 		// === 4. Build order query.
@@ -449,7 +470,7 @@ class EOWC_Admin {
 		$total     = $result->total;
 
 		if ( empty( $total ) ) {
-			wp_send_json_error( array( 'message' => 'Nothing to export. Please, adjust your filters.' ) );
+			return new \WP_Error( 'eowc_no_orders', 'Nothing to export. Please, adjust your filters.' );
 		}
 
 		$upload_dir = wp_upload_dir();
@@ -664,24 +685,20 @@ class EOWC_Admin {
 
 		// === 5. Done/next batch.
 		if ( empty( $order_ids ) || ( $offset + $limit ) >= $total ) {
-			wp_send_json_success(
-				array(
-					'done'         => true,
-					'total'        => $total,
-					'file_url'     => $file_url,
-					'download_url' => $download_url,
-				)
+			return array(
+				'done'         => true,
+				'total'        => $total,
+				'file_url'     => $file_url,
+				'download_url' => $download_url,
 			);
 		} else {
-			wp_send_json_success(
-				array(
-					'done'         => false,
-					'next_offset'  => $offset + $limit,
-					'processed'    => count( $order_ids ),
-					'total'        => $total,
-					'file_url'     => $file_url,
-					'download_url' => $download_url,
-				)
+			return array(
+				'done'         => false,
+				'next_offset'  => $offset + $limit,
+				'processed'    => count( $order_ids ),
+				'total'        => $total,
+				'file_url'     => $file_url,
+				'download_url' => $download_url,
 			);
 		}
 	}

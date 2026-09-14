@@ -31,12 +31,15 @@ class EOWC_Plugin {
 	 */
 	private function load_dependencies(): void {
 		require_once EOWC_PLUGIN_PATH . 'includes/class-eowc-admin.php';
+		require_once EOWC_PLUGIN_PATH . 'includes/class-eowc-abilities.php';
 	}
 
 	/**
 	 * Init hooks.
 	 */
 	private function init_hooks(): void {
+		EOWC_Abilities::init();
+
 		if ( is_admin() ) {
 			new EOWC_Admin();
 		}

@@ -25,6 +25,12 @@ Use it to export WooCommerce orders to CSV, Excel (XLSX), PDF, XML, or JSON. Fil
 - Compatible with WooCommerce HPOS / custom order tables.
 - PDF support includes a reduced font set with Japanese/CJK fallback coverage.
 
+## WordPress Abilities API
+
+On WordPress 6.9 and later, the plugin registers the public `eowc/export-orders` ability. It lets authorized automation and AI clients discover and call order exports through the Abilities API, including date range, status, format, and column filters.
+
+The ability requires the `manage_options` capability and processes exports in batches of 100 orders. Clients should repeat the call with the returned `next_offset` and the same `export_id` until `done` is `true`.
+
 ## Common Use Cases
 
 - Create WooCommerce order reports for accounting or bookkeeping.
