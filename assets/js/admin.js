@@ -206,7 +206,7 @@ jQuery(function ($) {
     /* =========================================================
        Export (batch)
     ========================================================= */
-   let offset = 0;
+    let offset = 0;
     let totalProcessed = 0;
     let totalOrders = 0;
     let currentExportId = ''; // Holds batch ID across requests

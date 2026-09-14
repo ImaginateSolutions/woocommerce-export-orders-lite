@@ -3,7 +3,7 @@
  * Plugin Name: Export Orders for WooCommerce
  * Plugin URI: https://imaginate-solutions.com/
  * Description: This plugin lets store owners export orders.
- * Version: 2.0.0
+ * Version: 2.1.0
  * Author: Imaginate Solutions
  * Author URI: https://imaginate-solutions.com/
  * Requires PHP: 8.0
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'EOWC_VERSION', '2.0.0' );
+define( 'EOWC_VERSION', '2.1.0' );
 define( 'EOWC_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 define( 'EOWC_PLUGIN_FILE', __FILE__ );
 define( 'EOWC_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
