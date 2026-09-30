@@ -1,84 +1,165 @@
-=== Export Orders for WooCommerce – CSV, Excel, XML, JSON & PDF Export ===
+=== Export Orders for WooCommerce – AI & MCP for Claude and ChatGPT ===
 Contributors: ImagiSol, dhruvin
-Donate link: https://paypal.me/DhruvinS?_ga=1.134259249.1705473128.1507170477
-Tags: woocommerce, export orders, order export, csv export, excel export, pdf export
+Donate link: https://paypal.me/DhruvinS
+Tags: woocommerce, export orders, mcp, claude, chatgpt
 Requires at least: 6.9.0
 Tested up to: 7.1
-Requires PHP: 8.0
+Requires PHP: 8.1
 Stable tag: 2.2.0
 License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Export WooCommerce orders to CSV, Excel, PDF, XML, or JSON with status filters, customer details, product items, and draggable column ordering.
+Export WooCommerce orders to CSV, Excel, PDF, XML or JSON. Connect Claude and ChatGPT through MCP to preview orders and generate exports for free.
 
 == Description ==
 
-**Export Orders for WooCommerce** is a WooCommerce order export plugin for store owners, administrators, and managers who need quick access to order reports, customer details, billing and shipping data, and product line item information.
+**Export Orders for WooCommerce** lets you create order reports in CSV, Excel (XLSX), PDF, XML and JSON from WordPress or through Claude and ChatGPT. Filter orders, select customer and product fields, and download the results.
 
-Use this WooCommerce export orders tool to export orders to **CSV**, **Excel (XLSX)**, **PDF**, **XML**, or **JSON**. You can filter WooCommerce orders by status and date range, choose the exact export fields, and drag columns into the same order you want in the final export file.
+The built-in **Model Context Protocol (MCP) server** lets connected AI assistants discover export fields, check order counts and create export files through conversation.
 
-Whether you need a WooCommerce order CSV export for accounting, an Excel order report for analysis, a PDF order report for sharing, or a JSON/XML export for integrations, this plugin keeps the process simple inside the WordPress admin.
+**All plugin features are free**, including MCP connections, the AI Export Assistant and every export format. No Pro upgrade or paid plugin add-on is required. Your AI provider's account requirements, subscription charges and usage limits are separate. Manual exports work without an AI account.
 
-**Key Features:**
+= WooCommerce order export features =
 
-- **Export WooCommerce orders to CSV** for spreadsheets, accounting, reporting, and order archives.
-- **Export WooCommerce orders to Excel (XLSX)** with selected order columns and customer details.
-- **Export WooCommerce orders to PDF** for printable order reports and shareable summaries.
-- **Export WooCommerce orders to XML or JSON** for structured data workflows and integrations.
-- Filter order exports by **order status** and **order date range**.
-- Export customer details, billing details, shipping details, order totals, payment details, coupon codes, and product line items.
-- Select or deselect individual WooCommerce export columns.
-- Drag export columns into a custom sequence so the exported file matches the admin-selected column order.
-- Export product names, SKUs, quantities, and line totals from WooCommerce orders.
-- Export button appears beside the WooCommerce **Add order** button on the orders screen.
-- Review selected filters, format, and columns before starting the export.
-- Batch export processing with progress feedback for smoother order exports.
-- Compatible with WooCommerce HPOS / custom order tables.
-- Bundled PDF support includes a reduced font set with Japanese/CJK fallback coverage.
+* Export orders to CSV, Excel (XLSX), PDF, XML or JSON.
+* Filter by order status and date range.
+* Select fields and drag columns into your preferred order in the export form.
+* Include order IDs, dates, totals, taxes, discounts, shipping, payment details, customer notes and coupons.
+* Include customer emails, phone numbers, billing and shipping addresses, product names, SKUs, quantities and line totals.
+* Review your selections before exporting and follow batch progress.
+* Open the export interface beside WooCommerce's Add order button.
+* Use WooCommerce HPOS / custom order tables.
+* Generate PDF reports with bundled fonts, including Japanese/CJK fallback coverage.
 
-**Common Use Cases:**
+= Export orders with Claude and ChatGPT =
 
-- Create WooCommerce order reports for accounting or bookkeeping.
-- Export WooCommerce orders by date range for monthly, weekly, or custom reports.
-- Export completed, processing, pending, refunded, or other WooCommerce order statuses.
-- Export customer email, phone, billing address, and shipping address details.
-- Export WooCommerce order items, product SKUs, quantities, and product totals.
-- Generate CSV or Excel files for analysis in spreadsheet software.
-- Generate PDF order reports for internal review or sharing.
-- Use XML or JSON order exports for structured data handling.
+Connect either assistant to your store's MCP URL and approve access through WordPress. Both can have active connections at the same time.
 
-**Included export fields:**
+The tools read order information and generate files; they do not provide actions to edit or delete WooCommerce orders.
 
-- Order information: Order ID, status, date, totals, discount, tax, shipping total, payment method, transaction ID, customer note, and coupon codes.
-- Customer and billing information: Customer ID, email, phone, billing name, company, address, city, state, postcode, and country.
-- Shipping information: Shipping name, company, address, city, state, postcode, country, and shipping method.
-- Product information: Product names, SKUs, quantities, and line totals.
+The **AI Export Assistant** in the WordPress export screen also accepts supported plain-language requests and fills the form for review. This local request interpreter is separate from connecting an external AI assistant.
 
-For support, suggestions, or customizations, reach out at [info@imaginate-solutions.com](mailto:info@imaginate-solutions.com).
+= Example requests =
 
-Some of the other **Pro Plugins**
+* "List the available order export fields and formats."
+* "Preview five completed orders from last month."
+* "Export completed orders from 2026-08-01 to 2026-08-31 as CSV with order ID, date, customer email and total."
+* "Create an Excel export with product SKUs and quantities."
+* "Check the status of my export."
 
-* [File Uploads Addon for WooCommerce](https://imaginate-solutions.com/downloads/woocommerce-addon-uploads/) - Convert your WooCommerce store into an online Print on Demand (POD) store by allowing users to upload files when adding products to cart.
+Review interpreted filters and fields before exporting.
 
-* [Custom Shipping Methods for WooCommerce](https://imaginate-solutions.com/downloads/custom-shipping-methods-for-woocommerce/?utm_source=wporg&utm_medium=weo&utm_campaign=readme/) - Create custom shipping methods for your WooCommerce store and manage dynamic shipping with ease.
+= Available MCP tools =
 
-* [Custom Payment Gateways for WooCommerce](https://imaginate-solutions.com/downloads/custom-payment-gateways-for-woocommerce/?utm_source=wporg&utm_medium=weo&utm_campaign=readme/) - Create custom payment gateways for your WooCommerce store to add more payment options for the user to choose from.
+* `eowc-get-fields`: discover available export fields.
+* `eowc-get-formats`: list supported export formats.
+* `eowc-query`: preview matching orders and their count.
+* `eowc-generate-export`: create an export job.
+* `eowc-get-export-status`: check job progress.
+* `eowc-export-orders`: export using structured parameters.
+* `eowc-ai-export-orders`: interpret a supported export request.
 
-* [Payment Gateways by User Roles for WooCommerce](https://imaginate-solutions.com/downloads/payment-gateways-by-user-roles-for-woocommerce/?utm_source=wporg&utm_medium=weo&utm_campaign=readme/) - Allow payment gateways to be available or not available for only particular user roles for your WooCommerce store.
+Includes native HTTP/STDIO MCP and WordPress Abilities API support; no WordPress MCP Adapter plugin required. Other clients need compatible authentication and transport.
 
-* **[Variations Radio Buttons for WooCommerce](https://imaginate-solutions.com/downloads/variations-radio-buttons-for-woocommerce/?utm_source=wporg&utm_medium=weo&utm_campaign=readme/)** - Convert your WooCommerce variations dropdown to a radio button selection.
+= Authentication and access =
+
+Remote connections use OAuth authorization codes with S256 PKCE, administrator consent, expiring access tokens and rotating refresh tokens. ChatGPT client metadata discovery and Claude dynamic client registration are supported. Enter your WordPress password only on your store's sign-in page.
+
+Authorization requires the WordPress `manage_options` capability, normally held by administrators. Open **Export Orders > AI Connections > Revoke my AI connections** to revoke all connections approved by your current WordPress user. Revocation does not erase data already returned to an assistant.
+
+= External services and privacy =
+
+Connecting an AI assistant is optional. The MCP server and OAuth endpoints run on your WordPress site; this version does not require a publisher-hosted discovery service.
+
+**OpenAI / ChatGPT:** During client verification, WordPress may retrieve the public client metadata document from `chatgpt.com`. This sends a network request, including the server IP and normal HTTP request information, but does not include order data. Once you authorize ChatGPT and it calls tools, your site returns the requested results, which can contain order/customer details and export download links. OAuth exchanges also pass authorization codes and tokens between your site and the client. [OpenAI terms](https://openai.com/policies/terms-of-use/) and [privacy policy](https://openai.com/policies/privacy-policy/).
+
+**Anthropic / Claude:** If you connect Claude, it communicates with your site's discovery, registration, authorization, token and MCP endpoints. After authorization, requested tool results can contain order/customer details and export download links. The browser returns to a Claude callback with the authorization result. [Anthropic terms](https://www.anthropic.com/legal/consumer-terms) and [privacy policy](https://www.anthropic.com/legal/privacy).
+
+Share only the fields needed for your task. An assistant or anyone receiving a valid export download link may obtain the file. Your chosen provider's policies and account settings govern its handling of received data.
+
+Optional connection diagnostics record step names, UTC times and HTTP status codes for 10 minutes. Results expire after one hour and can be cleared by an administrator.
+
+Support: [info@imaginate-solutions.com](mailto:info@imaginate-solutions.com).
+
+= More WooCommerce plugins by Imaginate Solutions =
+
+Explore our separate Pro plugins for your store.
+
+* [File Uploads Addon for WooCommerce](https://imaginate-solutions.com/downloads/woocommerce-addon-uploads/?utm_source=wordpress.org&utm_medium=plugin_readme&utm_campaign=export_orders_for_woocommerce&utm_content=related_plugins_file_uploads) - Collect customer files with orders for personalized products and print-on-demand workflows.
+* [Custom Shipping Methods for WooCommerce](https://imaginate-solutions.com/downloads/custom-shipping-methods-for-woocommerce/?utm_source=wordpress.org&utm_medium=plugin_readme&utm_campaign=export_orders_for_woocommerce&utm_content=related_plugins_shipping_methods) - Configure custom shipping methods for your store's requirements.
+* [Custom Payment Gateways for WooCommerce](https://imaginate-solutions.com/downloads/custom-payment-gateways-for-woocommerce/?utm_source=wordpress.org&utm_medium=plugin_readme&utm_campaign=export_orders_for_woocommerce&utm_content=related_plugins_payment_gateways) - Add custom payment methods to your WooCommerce checkout.
+* [Payment Gateways by User Roles for WooCommerce](https://imaginate-solutions.com/downloads/payment-gateways-by-user-roles-for-woocommerce/?utm_source=wordpress.org&utm_medium=plugin_readme&utm_campaign=export_orders_for_woocommerce&utm_content=related_plugins_role_payments) - Control which payment methods are available to different customer roles.
+* [Variations Radio Buttons for WooCommerce](https://imaginate-solutions.com/downloads/variations-radio-buttons-for-woocommerce/?utm_source=wordpress.org&utm_medium=plugin_readme&utm_campaign=export_orders_for_woocommerce&utm_content=related_plugins_variation_buttons) - Display variation choices as radio buttons instead of dropdowns.
 
 == Installation ==
 
-= Automatic Installation =
+= Install and export manually =
 
-Automatic installation is the easiest option as WordPress handles the file transfers itself and you do not need to leave your web browser. To do an automatic install of Export Orders for WooCommerce, log in to your WordPress dashboard, navigate to the Plugins menu, and click Add New.
+1. Use WordPress 6.9 or later, active WooCommerce, and 64-bit PHP 8.1 or later.
+2. In Plugins > Add New, search for Export Orders for WooCommerce and install it, or upload the release ZIP through Upload Plugin.
+3. Activate the plugin and open Export Orders.
+4. Choose filters, format and fields; review your selections and export.
 
-In the search field type "Export Orders for WooCommerce" and click Search Plugins. Once you have found the plugin, click Install Now and then activate it.
+= Connect ChatGPT =
 
-= Manual installation =
+1. Use a publicly reachable HTTPS store and a ChatGPT account with access to custom MCP connections.
+2. In WordPress, open Export Orders > AI Connections and copy the MCP server URL.
+3. In ChatGPT, enable Developer mode if required by your account, then create a custom MCP connection from its plugin/app settings.
+4. Paste the copied URL, select OAuth and use automatic client discovery. Leave manual client credentials blank.
+5. Sign in to your WordPress store as an administrator and approve access.
+6. Enable the connection in your conversation and ask it to list export fields before requesting a small export.
 
-The manual installation method involves downloading the plugin and uploading it to your webserver via your preferred FTP application. The WordPress codex contains [instructions on how to do this here](http://codex.wordpress.org/Managing_Plugins#Manual_Plugin_Installation).
+Labels and availability vary by account and client version. See [OpenAI's connection guide](https://developers.openai.com/plugins/deploy/connect-chatgpt).
+
+= Connect Claude =
+
+1. Copy the same MCP URL from Export Orders > AI Connections.
+2. In Claude's connector settings, add a custom connector and paste the URL.
+3. Choose Sign in now if prompted. Leave manual OAuth credentials blank; automatic registration is supported. Published client identity is also supported for the recognized Claude clients.
+4. Complete WordPress administrator sign-in and approve access.
+5. Enable the connector and request a small order preview, then an export.
+
+Requires custom connector access. See [Claude's authentication guide](https://claude.com/docs/connectors/building/authentication).
+
+= Local MCP clients =
+
+With WP-CLI installed, configure a local STDIO client to run:
+
+`wp --path=/path/to/wordpress eowc-mcp serve --user=admin`
+
+Replace the path and user with your installation and an authorized administrator. This is a local process connection, separate from remote OAuth.
+
+== Frequently Asked Questions ==
+
+= Are MCP and AI exports free? =
+
+Yes. All features described here are included free, with no Pro requirement. ChatGPT or Claude may require a separate subscription or workspace permission for custom connections.
+
+= Do I need an API key or an AI account for normal exports? =
+
+No. Manual exports and the local form assistant work without either. Connecting ChatGPT or Claude requires an eligible provider account, but this plugin's OAuth setup does not require an OpenAI or Anthropic API key.
+
+= Can I connect ChatGPT and Claude simultaneously? =
+
+Yes. Authorize each separately using the same store MCP URL. The WordPress revocation button disconnects all AI connections approved by the current WordPress user.
+
+= Which formats and fields can I export? =
+
+CSV, XLSX, PDF, XML and JSON, with selectable order, customer, billing, shipping and product fields. Filter by status/date and arrange columns in the manual export form. WooCommerce must be active; HPOS is supported.
+
+= Why does sign-in or discovery fail? =
+
+Check HTTPS, the copied MCP URL and the discovery status under AI Connections. A working metadata link alone does not prove every discovery route is reachable. On supported Apache subdirectory installations, the plugin attempts to install marked rules in the domain-root .htaccess and creates a backup when an existing file is present. Other servers or unwritable root files may need hosting assistance. Compatibility across all hosts is not guaranteed.
+
+For more detail, start Connection diagnostics, retry once, then refresh the page. Do not share passwords, tokens or download links in public support requests.
+
+= Why is an export queued, or a download no longer available? =
+
+Larger export jobs may use WP-Cron; check that scheduled tasks run. Download links are temporary and files are removed after download. Generate a new export if the link has expired or the file has already been downloaded. Treat the link as confidential.
+
+= Can the AI assistant change orders? =
+
+The supplied export tools read data and generate export files. They do not expose order-editing or order-deletion actions. Review which customer fields you share with your assistant.
 
 == Screenshots ==
 
@@ -90,9 +171,14 @@ The manual installation method involves downloading the plugin and uploading it 
 == Changelog ==
 
 = 2.2.0 =
-* New: Added Model Context Protocol (MCP) server support for ChatGPT and Claude.
-* New: Added OAuth 2.0 PKCE authentication flow supporting Dynamic Client Registration (DCR) and ChatGPT client metadata discovery.
-* New: Introduced WordPress Plugin Abilities API integration to expose WooCommerce order and customer exports to AI assistants.
+* Fixed an issue that caused refunded orders to appear twice in exports.
+* Added free Model Context Protocol (MCP) support for ChatGPT and Claude, with seven tools for discovering fields, previewing orders and generating exports.
+* Added OAuth authorization with S256 PKCE, dynamic client registration for Claude and client metadata discovery for ChatGPT.
+* Added the AI Connections settings page, access revocation and connection diagnostics.
+* Added OAuth discovery routing support for compatible hosting environments.
+* Added the AI Export Assistant to fill the export form from supported plain-language requests.
+* Added WordPress Abilities API integration for order exports.
+* Updated the declared minimum PHP version to 8.1 to match bundled dependencies.
 
 = 2.1.0 =
 * Fixed an issue where batches would not export the data correctly.
@@ -130,52 +216,7 @@ The manual installation method involves downloading the plugin and uploading it 
 = 0.1 =
 * Initial launch version.
 
-== Frequently Asked Questions ==
-
-= Does this plugin export WooCommerce orders to CSV? =
-
-Yes. You can export WooCommerce orders to CSV with selected order, customer, billing, shipping, and product columns.
-
-= Can I export WooCommerce orders to Excel? =
-
-Yes. The plugin supports Excel exports in XLSX format.
-
-= Can I export WooCommerce orders to PDF? =
-
-Yes. The plugin supports PDF order exports using the included mPDF library and a reduced DejaVu Sans Condensed font set.
-
-= Does it support XML and JSON order exports? =
-
-Yes. You can export WooCommerce order data in XML or JSON format for structured data workflows.
-
-= Can I export customer details from WooCommerce orders? =
-
-Yes. You can export customer ID, customer email, customer phone, billing name, billing address, shipping name, shipping address, and related order details.
-
-= Can I export WooCommerce product items and SKUs? =
-
-Yes. Product names, product SKUs, quantities, and line totals are available in the Products column group.
-
-= Can I filter WooCommerce order exports by status and date? =
-
-Yes. You can filter exports by WooCommerce order status and by a date-from/date-to range.
-
-= Can I control the order of columns in the export file? =
-
-Yes. In the Export Columns section, drag the selected fields into the sequence you want. The exported file uses the same column sequence.
-
-= Is this plugin compatible with WooCommerce HPOS? =
-
-Yes. The plugin declares compatibility with WooCommerce HPOS / custom order tables.
-
-= Does it work without WooCommerce? =
-
-No, this plugin requires WooCommerce to be installed and active.
-
-= Does PDF export support Japanese characters? =
-
-Yes. The plugin includes DejaVu Sans Condensed plus Sun-ExtA/Sun-ExtB fallback fonts for Japanese/CJK PDF output while avoiding the full default mPDF font bundle.
-
 == Upgrade Notice ==
 
-Backup your store before upgrading the plugin.
+= 2.2.0 =
+Free MCP and AI export features added. Back up your store before upgrading. Requires WordPress 6.9+ and 64-bit PHP 8.1+. Reconnect an existing AI connection if prompted.
