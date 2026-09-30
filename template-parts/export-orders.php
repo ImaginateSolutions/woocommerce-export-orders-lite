@@ -23,6 +23,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <form id="eowc-export-form" class="eowc-form" novalidate>
 
+	<div class="eowc-card eowc-ai-assistant">
+		<div class="eowc-card-head">
+			<span class="eowc-card-icon">AI</span>
+			<h3><?php esc_html_e( 'AI Export Assistant', 'woocommerce-export-orders' ); ?></h3>
+		</div>
+		<p class="eowc-card-desc"><?php esc_html_e( 'Describe the export you need and the form will be filled for review.', 'woocommerce-export-orders' ); ?></p>
+		<div class="eowc-ai-assistant-row">
+			<label class="screen-reader-text" for="eowc-ai-request"><?php esc_html_e( 'Describe your export', 'woocommerce-export-orders' ); ?></label>
+			<input type="text" id="eowc-ai-request" class="eowc-input" placeholder="<?php esc_attr_e( 'Export completed orders from the last four months to XLSX with order ID, date, customer email, SKU, quantity and total.', 'woocommerce-export-orders' ); ?>">
+			<button type="button" class="eowc-btn eowc-btn--secondary" id="eowc-ai-apply"><?php esc_html_e( 'Apply to Form', 'woocommerce-export-orders' ); ?></button>
+			<button type="button" class="eowc-btn eowc-btn--secondary" id="eowc-ai-download" style="display:none;"><?php esc_html_e( 'Download Export', 'woocommerce-export-orders' ); ?></button>
+		</div>
+		<p class="eowc-card-desc"><?php esc_html_e( 'Try: yesterday, this quarter, last month, or previous week. You can name formats, statuses, and fields in any order.', 'woocommerce-export-orders' ); ?></p>
+		<div class="eowc-validation-banner" id="eowc-ai-error" style="display:none;"></div>
+		<div class="eowc-validation-success" id="eowc-ai-success" style="display:none;"></div>
+	</div>
+
 	<!-- Step 1: Config -->
 	<div class="eowc-step" id="eowc-step-config">
 

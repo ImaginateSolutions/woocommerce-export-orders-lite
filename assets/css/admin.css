@@ -149,6 +149,27 @@
     background: var(--eowc-success-light);
 }
 
+.eowc-ai-assistant-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.eowc-ai-assistant-row .eowc-input {
+    flex: 1;
+}
+
+.eowc-btn--secondary {
+    background: var(--eowc-primary-light);
+    color: var(--eowc-primary) !important;
+    border: 1px solid var(--eowc-primary);
+}
+
+.eowc-btn--secondary:hover {
+    background: var(--eowc-primary);
+    color: #fff !important;
+}
+
 /* ==========================================================================
    Fields row
    ========================================================================== */
@@ -239,6 +260,27 @@
 }
 
 .eowc-validation-banner svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+
+/* Validation banner */
+.eowc-validation-success {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    padding: 10px 14px;
+    background:  #bbe8b2;
+    border: 1px solid #3dcd20;
+    border-radius: var(--eowc-radius-sm);
+    font-size: 13px;
+    color: #000000;
+}
+
+.eowc-validation-success svg {
     width: 16px;
     height: 16px;
     flex-shrink: 0;
