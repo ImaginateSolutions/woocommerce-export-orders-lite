@@ -88,6 +88,91 @@ jQuery(function ($) {
         showStep('config');
     });
 
+    $('#eowc-ai-apply').on('click', function () {
+        const request = $('#eowc-ai-request').val().trim();
+        if (!request) return;
+
+        const button = $(this);
+        button.prop('disabled', true);
+        $('#eowc-ai-error').hide().text('');
+        $('#eowc-ai-success').hide().text('');
+
+        $.ajax({
+            url: eowc_export_orders_params.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'eowc_ai_export_assistant',
+                nonce: eowc_export_orders_params.nonce,
+                request: request,
+            },
+            success: function (res) {
+                if (!res.success) {
+                    $('#eowc-ai-error').text(res.data.message || 'Unable to interpret that request.').show();
+                    return;
+                }
+
+                const config = res.data;
+                $('[name="eowc_date_from"]').val(config.eowc_date_from);
+                $('[name="eowc_date_to"]').val(config.eowc_date_to);
+                $('[name="eowc_export_format"][value="' + config.eowc_export_format + '"]').prop('checked', true).trigger('change');
+                const selectedStatuses = config.eowc_status.map(function (status) {
+                    return status.indexOf('wc-') === 0 ? status : 'wc-' + status;
+                });
+                $('[name="eowc_status[]"]').val(selectedStatuses).trigger('change');
+                $('[name="eowc_columns[]"]').prop('checked', false).closest('.eowc-checkbox-item').removeClass('is-checked');
+                config.eowc_columns.forEach(function (column) {
+                    $('[name="eowc_columns[]"][value="' + column + '"]').prop('checked', true).closest('.eowc-checkbox-item').addClass('is-checked');
+                });
+                $('#eowc-ai-success').text('Changes are applied, review and export.').show();
+            },
+            error: function () {
+                $('#eowc-ai-error').text('Unable to interpret that request.').show();
+            },
+            complete: function () {
+                button.prop('disabled', false);
+            }
+        });
+    });
+
+    $('#eowc-ai-download').on('click', function () {
+        const request = $('#eowc-ai-request').val().trim();
+        if (!request) return;
+
+        const button = $(this);
+        button.prop('disabled', true);
+        $('#eowc-ai-error').hide().text('');
+
+        $.ajax({
+            url: eowc_export_orders_params.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'eowc_ai_export_assistant',
+                nonce: eowc_export_orders_params.nonce,
+                request: request,
+            },
+            success: function (res) {
+                if (!res.success) {
+                    $('#eowc-ai-error').text(res.data.message || 'Unable to interpret that request.').show();
+                    return;
+                }
+
+                totalProcessed = 0;
+                offset = 0;
+                currentExportId = 'ai_export_' + Date.now();
+                $('.eowc-overlay').fadeIn(200);
+                setProgress(0, 'Starting AI export…');
+                startBatch(res.data);
+            },
+            error: function () {
+                $('#eowc-ai-error').text('Unable to interpret that request.').show();
+            },
+            complete: function () {
+                button.prop('disabled', false);
+            }
+        });
+    });
+
+
     function showStep(step) {
         if (step === 'confirm') {
             $('#eowc-step-config').addClass('eowc-step--hidden');
@@ -223,21 +308,24 @@ jQuery(function ($) {
         startBatch();
     });
 
-    function startBatch() {
-        const formData = $('#eowc-export-form').serializeArray();
-        let dataObj = {};
+    function startBatch(config) {
+        let dataObj = config || {};
 
-        formData.forEach(function (f) {
-            if (f.name === 'eowc_columns[]') {
-                if (!dataObj.eowc_columns) dataObj.eowc_columns = [];
-                dataObj.eowc_columns.push(f.value);
-            } else if (f.name === 'eowc_status[]') {
-                if (!dataObj.eowc_status) dataObj.eowc_status = [];
-                dataObj.eowc_status.push(f.value);
-            } else {
-                dataObj[f.name] = f.value;
-            }
-        });
+        if (!config) {
+            const formData = $('#eowc-export-form').serializeArray();
+
+            formData.forEach(function (f) {
+                if (f.name === 'eowc_columns[]') {
+                    if (!dataObj.eowc_columns) dataObj.eowc_columns = [];
+                    dataObj.eowc_columns.push(f.value);
+                } else if (f.name === 'eowc_status[]') {
+                    if (!dataObj.eowc_status) dataObj.eowc_status = [];
+                    dataObj.eowc_status.push(f.value);
+                } else {
+                    dataObj[f.name] = f.value;
+                }
+            });
+        }
 
         $.ajax({
             url: eowc_export_orders_params.ajax_url,
@@ -276,7 +364,7 @@ jQuery(function ($) {
                 const pct = totalOrders > 0 ? Math.min((totalProcessed / totalOrders) * 100, 99) : 50;
                 setProgress(pct, totalProcessed + ' of ' + totalOrders + ' orders processed…');
 
-                startBatch();
+                startBatch(dataObj);
             },
             error: function () {
                 setProgress(0, 'Network error. Please try again.');

@@ -27,9 +27,53 @@ Use it to export WooCommerce orders to CSV, Excel (XLSX), PDF, XML, or JSON. Fil
 
 ## WordPress Abilities API
 
-On WordPress 6.9 and later, the plugin registers the public `eowc/export-orders` ability. It lets authorized automation and AI clients discover and call order exports through the Abilities API, including date range, status, format, and column filters.
+On WordPress 6.9 and later, the plugin registers public `eowc/export-orders` and `eowc/ai-export-orders` abilities. They let authorized automation and AI clients discover and call order exports through the Abilities API, including date range, status, format, and column filters. Relative requests such as `last month`, `last four months`, and `last 4 months` are supported and use complete calendar months before the current month.
 
-The ability requires the `manage_options` capability and processes exports in batches of 100 orders. Clients should repeat the call with the returned `next_offset` and the same `export_id` until `done` is `true`.
+Both abilities require the `manage_options` capability and process exports in batches of 100 orders. Clients should repeat the call with the returned `next_offset` and the same `export_id` until `done` is `true`. The AI Export Assistant accepts a request such as `Export completed orders from 2026-01-01 to 2026-01-31 as CSV with order ID, customer email, and total.`
+
+The plugin also exposes these agent-facing abilities:
+
+- `export-orders/get-fields` returns available field keys, labels, and value types.
+- `export-orders/get-formats` returns enabled formats, extensions, and batch limits.
+- `export-orders/query` returns a total match count and up to 20 sample rows without creating a file.
+- `export-orders/generate-export` creates a validated export job and returns progress plus a secure download URL when complete.
+- `export-orders/get-export-status` returns the stored status for the current user’s export job.
+
+These abilities require `manage_options`. Small jobs complete immediately; jobs over 100 matching records are queued through WP-Cron and reported as `queued` or `processing`. Generated files and job state expire according to the `eowc_export_retention_seconds` filter, which defaults to one day.
+
+## MCP Server
+
+### Connect ChatGPT with OAuth
+
+The HTTP MCP endpoint now supports a WordPress sign-in and consent flow for ChatGPT,
+using authorization code + S256 PKCE, one-hour access tokens and rotating refresh
+tokens. No WordPress password or application password is entered in ChatGPT.
+See [CHATGPT-SETUP.md](CHATGPT-SETUP.md) for deployment, connection and troubleshooting.
+
+### Local STDIO clients
+
+The plugin provides its own MCP STDIO server and does not require the MCP Adapter plugin. Start it with:
+
+```bash
+wp --path=/var/www/wp-woo-large eowc-mcp serve --user=admin
+```
+
+Configure an MCP client to run `wp` with these arguments:
+
+```json
+{
+	"type": "stdio",
+	"command": "wp",
+	"args": [
+		"--path=/var/www/wp-woo-large",
+		"eowc-mcp",
+		"serve",
+		"--user=admin"
+	]
+}
+```
+
+The server exposes `eowc-get-fields`, `eowc-get-formats`, `eowc-query`, `eowc-generate-export`, `eowc-get-export-status`, `eowc-export-orders`, and `eowc-ai-export-orders`. It uses the selected WordPress user’s `manage_options` capability for authorization.
 
 ## Common Use Cases
 

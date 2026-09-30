@@ -25,12 +25,13 @@ class EOWC_Admin {
 	public function __construct() {
 		add_filter( 'plugin_action_links_' . EOWC_PLUGIN_BASENAME, array( $this, 'plugin_action_links' ), 20, 1 );
 		add_filter( 'admin_enqueue_scripts', array( $this, 'export_enqueue_scripts' ) );
-		add_filter( 'admin_menu', array( $this, 'order_export_page' ) );
+		add_action( 'admin_menu', array( $this, 'order_export_page' ), 10 );
 		add_action( 'admin_footer', array( $this, 'render_export_modal' ) );
 		// phpcs:ignore
 		// add_action( 'woocommerce_order_list_table_extra_tablenav', array( $this, 'add_export_button' ), 20, 1 );
 		add_action( 'admin_head', array( $this, 'add_order_page_export_button' ) );
 		add_action( 'wp_ajax_eowc_export_orders', array( $this, 'handle_export_orders' ) );
+		add_action( 'wp_ajax_eowc_ai_export_assistant', array( $this, 'handle_ai_export_assistant' ) );
 		add_action( 'admin_post_eowc_download_file', array( $this, 'download_file' ) );
 		add_action( 'admin_init', array( $this, 'save_installation_date' ) );
 		add_action( 'admin_notices', array( $this, 'show_review_notice' ) );
@@ -184,6 +185,27 @@ class EOWC_Admin {
 		}
 
 		$result = self::process_export_batch( wp_unslash( $_POST ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
+		}
+
+		wp_send_json_success( $result );
+	}
+
+	/**
+	 * Interpret an AI export request for the admin form.
+	 */
+	public function handle_ai_export_assistant() {
+		check_ajax_referer( 'eowc-export-orders', 'nonce' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( 'Unauthorized', 403 );
+		}
+
+		// phpcs:ignore
+		$request = isset( $_POST['request'] ) ? wp_unslash( $_POST['request'] ) : ''; // phpcs:ignore
+		$result  = EOWC_Abilities::suggest_export( $request );
 
 		if ( is_wp_error( $result ) ) {
 			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
@@ -504,7 +526,19 @@ class EOWC_Admin {
 
 			foreach ( $order_ids as $order_id ) {
 				$order = wc_get_order( $order_id );
-				$row   = array();
+				if ( ! $order ) {
+					continue;
+				}
+				// Do not export refunds as separate orders.
+				if ( $order instanceof \WC_Order_Refund ) {
+					continue;
+				}
+				// Safety check.
+				if ( ! $order instanceof \WC_Order ) {
+					continue;
+				}
+
+				$row = array();
 				foreach ( $column_callbacks as $cb ) {
 					$row[] = is_callable( $cb ) ? call_user_func( $cb, $order ) : '';
 				}
@@ -517,7 +551,18 @@ class EOWC_Admin {
 			$new_rows = array();
 			foreach ( $order_ids as $order_id ) {
 				$order = wc_get_order( $order_id );
-				$row   = array();
+				if ( ! $order ) {
+					continue;
+				}
+				// Do not export refunds as separate orders.
+				if ( $order instanceof \WC_Order_Refund ) {
+					continue;
+				}
+				// Safety check.
+				if ( ! $order instanceof \WC_Order ) {
+					continue;
+				}
+				$row = array();
 				foreach ( $column_callbacks as $i => $cb ) {
 					$row[ $headers[ $i ] ] = is_callable( $cb ) ? call_user_func( $cb, $order ) : '';
 				}
@@ -544,7 +589,19 @@ class EOWC_Admin {
 			}
 
 			foreach ( $order_ids as $order_id ) {
-				$order     = wc_get_order( $order_id );
+				$order = wc_get_order( $order_id );
+				if ( ! $order ) {
+					continue;
+				}
+				// Do not export refunds as separate orders.
+				if ( $order instanceof \WC_Order_Refund ) {
+					continue;
+				}
+				// Safety check.
+				if ( ! $order instanceof \WC_Order ) {
+					continue;
+				}
+
 				$order_xml = $xml->addChild( 'order' );
 				foreach ( $column_callbacks as $i => $cb ) {
 					$slug = preg_replace( '/[^a-z0-9_]/i', '_', strtolower( $headers[ $i ] ) );
@@ -576,12 +633,37 @@ class EOWC_Admin {
 				$row_start   = $sheet->getHighestRow() + 1;
 			}
 
-			foreach ( $order_ids as $i => $order_id ) {
+			// Actual XLSX export row.
+			$export_row = $row_start;
+
+			foreach ( $order_ids as $order_id ) {
+
 				$order = wc_get_order( $order_id );
-				foreach ( $column_callbacks as $col_idx => $cb ) {
-					$value = is_callable( $cb ) ? call_user_func( $cb, $order ) : '';
-					$sheet->setCellValueByColumnAndRow( $col_idx + 1, $row_start + $i, $value );
+				if ( ! $order ) {
+					continue;
 				}
+				// Do not export refunds as separate orders.
+				if ( $order instanceof \WC_Order_Refund ) {
+					continue;
+				}
+				// Safety check.
+				if ( ! $order instanceof \WC_Order ) {
+					continue;
+				}
+
+				foreach ( $column_callbacks as $col_idx => $cb ) {
+
+					$value = is_callable( $cb )
+						? call_user_func( $cb, $order )
+						: '';
+
+					$sheet->setCellValueByColumnAndRow(
+						$col_idx + 1,
+						$export_row,
+						$value
+					);
+				}
+				$export_row++; // phpcs:ignore
 			}
 
 			$sheet->getStyle( '1:1' )->getFont()->setBold( true );
@@ -602,6 +684,14 @@ class EOWC_Admin {
 			foreach ( $order_ids as $order_id ) {
 				$order = wc_get_order( $order_id );
 				if ( ! $order ) {
+					continue;
+				}
+				// Do not export refunds as separate orders.
+				if ( $order instanceof \WC_Order_Refund ) {
+					continue;
+				}
+				// Safety check.
+				if ( ! $order instanceof \WC_Order ) {
 					continue;
 				}
 
@@ -681,7 +771,16 @@ class EOWC_Admin {
 			}
 		}
 
-		$download_url = admin_url( 'admin-post.php?action=eowc_download_file&file=' . basename( $file_path ) . '&nonce=' . wp_create_nonce( 'eowc_download_file' ) );
+		$download_token = wp_generate_password( 48, false, false );
+		set_transient(
+			'eowc_download_' . hash( 'sha256', $download_token ),
+			array(
+				'file'    => basename( $file_path ),
+				'user_id' => get_current_user_id(),
+			),
+			HOUR_IN_SECONDS
+		);
+		$download_url = admin_url( 'admin-post.php?action=eowc_download_file&file=' . rawurlencode( basename( $file_path ) ) . '&token=' . rawurlencode( $download_token ) . '&nonce=' . wp_create_nonce( 'eowc_download_file' ) );
 
 		// === 5. Done/next batch.
 		if ( empty( $order_ids ) || ( $offset + $limit ) >= $total ) {
@@ -707,18 +806,21 @@ class EOWC_Admin {
 	 * Download the exported file and delete it immediately after transfer.
 	 */
 	public function download_file() {
+		$token       = isset( $_GET['token'] ) ? sanitize_text_field( wp_unslash( $_GET['token'] ) ) : '';
+		$token_key   = $token ? 'eowc_download_' . hash( 'sha256', $token ) : '';
+		$token_data  = $token_key ? get_transient( $token_key ) : false;
+		$token_valid = is_array( $token_data ) && ! empty( $token_data['file'] );
 
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( 'Unauthorized' );
+		if ( ! $token_valid ) {
+			if ( ! current_user_can( 'manage_options' ) || ! isset( $_GET['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['nonce'] ) ), 'eowc_download_file' ) ) {
+				wp_die( esc_html__( 'Invalid or expired download request.', 'woocommerce-export-orders' ) );
+			}
 		}
 
-		if ( ! isset( $_GET['nonce'] ) ||
-			! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['nonce'] ) ), 'eowc_download_file' ) ) {
-
-			wp_die( esc_html__( 'Invalid request.', 'woocommerce-export-orders' ) );
+		$file = $token_valid ? $token_data['file'] : ( isset( $_GET['file'] ) ? sanitize_text_field( wp_unslash( $_GET['file'] ) ) : '' );
+		if ( $token_valid ) {
+			delete_transient( $token_key );
 		}
-
-		$file = isset( $_GET['file'] ) ? sanitize_text_field( wp_unslash( $_GET['file'] ) ) : '';
 
 		if ( empty( $file ) ) {
 			wp_die( 'File not found' );

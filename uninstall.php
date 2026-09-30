@@ -9,6 +9,29 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
+// Remove OAuth grants, cached public client metadata and per-user revocation state.
+wp_clear_scheduled_hook( 'eowc_oauth_cleanup' );
+delete_transient( 'eowc_oauth_diagnostic_until' );
+delete_transient( 'eowc_oauth_diagnostic_events' );
+global $wpdb;
+do {
+	// phpcs:ignore
+	$eowc_oauth_options = $wpdb->get_col( 
+		$wpdb->prepare(
+			"SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s LIMIT 500",
+			$wpdb->esc_like( 'eowc_oauth_record_' ) . '%',
+			$wpdb->esc_like( '_transient_eowc_oauth_client_' ) . '%',
+			$wpdb->esc_like( '_transient_timeout_eowc_oauth_client_' ) . '%'
+		)
+	);
+	$eowc_oauth_deleted = 0;
+	foreach ( $eowc_oauth_options as $eowc_oauth_option ) {
+		$eowc_oauth_deleted += (int) delete_option( $eowc_oauth_option );
+	}
+	// phpcs:ignore
+} while ( count( $eowc_oauth_options ) === 500 && $eowc_oauth_deleted > 0 );
+delete_metadata( 'user', 0, 'eowc_oauth_epoch', '', true );
+
 /**
  * Delete user-specific temp export files
  */

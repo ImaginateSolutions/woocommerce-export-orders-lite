@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: Export Orders for WooCommerce
+ * Plugin Name: Export Orders for WooCommerce – CSV, Excel, XML, JSON & PDF Export
  * Plugin URI: https://imaginate-solutions.com/
  * Description: This plugin lets store owners export orders.
- * Version: 2.1.0
+ * Version: 2.2.0
  * Author: Imaginate Solutions
  * Author URI: https://imaginate-solutions.com/
  * Requires PHP: 8.0
@@ -25,6 +25,8 @@ define( 'EOWC_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 define( 'EOWC_PLUGIN_FILE', __FILE__ );
 define( 'EOWC_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'EOWC_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'EOWC_PLUGIN_IMG_URL', EOWC_PLUGIN_URL . 'assets/img/plugin-icon.png' );
+
 
 add_action(
 	'before_woocommerce_init',
@@ -41,6 +43,12 @@ add_action(
 
 
 register_activation_hook( __FILE__, 'eowc_free_activate' );
+register_deactivation_hook( __FILE__, 'eowc_oauth_deactivate' );
+
+/** Stop OAuth housekeeping while the plugin is inactive. */
+function eowc_oauth_deactivate() {
+	wp_clear_scheduled_hook( 'eowc_oauth_cleanup' );
+}
 
 /**
  * Register activation callback.

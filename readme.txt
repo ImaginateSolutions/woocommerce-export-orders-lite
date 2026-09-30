@@ -2,10 +2,10 @@
 Contributors: ImagiSol, dhruvin
 Donate link: https://paypal.me/DhruvinS?_ga=1.134259249.1705473128.1507170477
 Tags: woocommerce, export orders, order export, csv export, excel export, pdf export
-Requires at least: 5.0
+Requires at least: 6.9.0
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 2.1.0
+Stable tag: 2.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -88,6 +88,11 @@ The manual installation method involves downloading the plugin and uploading it 
 4. Export Orders button beside the WooCommerce Add order button.
 
 == Changelog ==
+
+= 2.2.0 =
+* New: Added Model Context Protocol (MCP) server support for ChatGPT and Claude.
+* New: Added OAuth 2.0 PKCE authentication flow supporting Dynamic Client Registration (DCR) and ChatGPT client metadata discovery.
+* New: Introduced WordPress Plugin Abilities API integration to expose WooCommerce order and customer exports to AI assistants.
 
 = 2.1.0 =
 * Fixed an issue where batches would not export the data correctly.
