@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: Export Orders for WooCommerce – CSV, Excel, XML, JSON & PDF Export
+ * Plugin Name: Export Orders for WooCommerce – AI & MCP for Claude and ChatGPT
  * Plugin URI: https://imaginate-solutions.com/
  * Description: This plugin lets store owners export orders.
- * Version: 2.2.0
+ * Version: 2.3.0
  * Author: Imaginate Solutions
  * Author URI: https://imaginate-solutions.com/
  * Requires PHP: 8.0
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'EOWC_VERSION', '2.1.0' );
+define( 'EOWC_VERSION', '2.3.0' );
 define( 'EOWC_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 define( 'EOWC_PLUGIN_FILE', __FILE__ );
 define( 'EOWC_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );

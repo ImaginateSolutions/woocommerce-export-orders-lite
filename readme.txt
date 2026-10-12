@@ -1,11 +1,11 @@
 === Export Orders for WooCommerce – AI & MCP for Claude and ChatGPT ===
 Contributors: ImagiSol, dhruvin
 Donate link: https://paypal.me/DhruvinS
-Tags: woocommerce, export orders, mcp, claude, chatgpt
+Tags: woocommerce export orders, export orders, mcp, claude, chatgpt, csv, pdf, excel
 Requires at least: 6.9.0
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.2.0
+Stable tag: 2.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -170,6 +170,11 @@ The supplied export tools read data and generate export files. They do not expos
 
 == Changelog ==
 
+= 2.3.0 =
+* Fixed array-to-string conversion warnings in OAuth discovery and root authorization fallback by correcting request URL path parsing.
+* Fixed array-to-string conversion warnings for malformed MCP request methods and tool names. Invalid values now return structured JSON-RPC errors.
+* Fixed an undefined array key warning when the diagnostic action is missing from a connection diagnostics request.
+
 = 2.2.0 =
 * Fixed an issue that caused refunded orders to appear twice in exports.
 * Added free Model Context Protocol (MCP) support for ChatGPT and Claude, with seven tools for discovering fields, previewing orders and generating exports.
@@ -217,6 +222,9 @@ The supplied export tools read data and generate export files. They do not expos
 * Initial launch version.
 
 == Upgrade Notice ==
+
+= 2.3.0 =
+Fixes PHP warnings in OAuth discovery, MCP request handling and connection diagnostics. Back up your store before upgrading.
 
 = 2.2.0 =
 Free MCP and AI export features added. Back up your store before upgrading. Requires WordPress 6.9+ and 64-bit PHP 8.1+. Reconnect an existing AI connection if prompted.

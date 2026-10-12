@@ -25,7 +25,10 @@ class EOWC_MCP_Server {
 	public static function handle_request( array $request ) {
 
 		$id     = $request['id'] ?? null;
-		$method = isset( $request['method'] ) ? (string) $request['method'] : '';
+		if ( ! isset( $request['method'] ) || ! is_string( $request['method'] ) ) {
+			return self::error_response( $id, -32600, 'The request method must be a string.' );
+		}
+		$method = $request['method'];
 		$params = isset( $request['params'] ) && is_array( $request['params'] )
 			? $request['params']
 			: array();
@@ -83,9 +86,10 @@ class EOWC_MCP_Server {
 	 */
 	private static function call_tool( $id, array $params ): array {
 
-		$name = isset( $params['name'] )
-			? (string) $params['name']
-			: '';
+		if ( ! isset( $params['name'] ) || ! is_string( $params['name'] ) ) {
+			return self::error_response( $id, -32602, 'The tool name must be a string.' );
+		}
+		$name = $params['name'];
 
 		$input = isset( $params['arguments'] ) && is_array( $params['arguments'] )
 			? $params['arguments']

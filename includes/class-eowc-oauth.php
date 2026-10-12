@@ -241,7 +241,7 @@ class EOWC_OAuth {
 	 * Discovery Function
 	 */
 	public static function discovery(): void {
-		$path        = untrailingslashit( (string) wp_parse_url( sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH ) ) ) );
+		$path        = untrailingslashit( (string) wp_parse_url( sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) ), PHP_URL_PATH ) );
 		$is_server   = in_array( $path, self::discovery_paths(), true );
 		$is_resource = ! $is_server && in_array( $path, self::resource_discovery_paths(), true );
 		if ( ! $is_server && ! $is_resource ) {
@@ -264,7 +264,7 @@ class EOWC_OAuth {
 	 * web-server rewrite from the domain root to the WordPress subfolder).
 	 */
 	public static function handle_root_authorization_fallback(): void {
-		$path   = untrailingslashit( (string) wp_parse_url( sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH ) ) ) );
+		$path   = untrailingslashit( (string) wp_parse_url( sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) ), PHP_URL_PATH ) );
 		$home   = untrailingslashit( (string) wp_parse_url( home_url( '/' ), PHP_URL_PATH ) );
 		$method = $_SERVER['REQUEST_METHOD'] ?? ''; // phpcs:ignore
 		$type   = strtolower( (string) ( $_SERVER['CONTENT_TYPE'] ?? '' ) );// phpcs:ignore
@@ -1229,7 +1229,7 @@ CSS;
 		}
 		check_admin_referer( 'eowc_oauth_diagnostics' );
 		// phpcs:ignore
-		if ( 'start' === ( sanitize_text_field( wp_unslash( $_POST['diagnostic_action'] ) ) ?? '' ) ) {
+		if ( 'start' === sanitize_text_field( wp_unslash( $_POST['diagnostic_action'] ?? '' ) ) ) {
 			set_transient( 'eowc_oauth_diagnostic_until', time() + 10 * MINUTE_IN_SECONDS, 10 * MINUTE_IN_SECONDS );
 			delete_transient( 'eowc_oauth_diagnostic_events' );
 			self::diagnostic( 'recording_started' );
