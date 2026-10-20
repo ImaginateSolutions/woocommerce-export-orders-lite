@@ -5,7 +5,7 @@ Tags: woocommerce export orders, export orders, mcp, claude, chatgpt, csv, pdf, 
 Requires at least: 6.9.0
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 2.3.0
+Stable tag: 2.3.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,7 +17,9 @@ Export WooCommerce orders to CSV, Excel, PDF, XML or JSON. Connect Claude and Ch
 
 The built-in **Model Context Protocol (MCP) server** lets connected AI assistants discover export fields, check order counts and create export files through conversation.
 
-**All plugin features are free**, including MCP connections, the AI Export Assistant and every export format. No Pro upgrade or paid plugin add-on is required. Your AI provider's account requirements, subscription charges and usage limits are separate. Manual exports work without an AI account.
+**Start with Lite. Automate with Pro.** Lite includes all five export formats, core MCP connections and the AI Export Assistant. Upgrade to **Export Orders Pro** to turn repeated reporting tasks into scheduled exports, deliver files automatically and include custom order metadata. Your AI provider's account requirements, subscription charges and usage limits are separate. Manual exports work without an AI account.
+
+**Need recurring reports, custom fields or automatic delivery?** [Explore Export Orders Pro](https://imaginate-solutions.com/downloads/woocommerce-export-orders/?utm_source=wordpress.org&utm_medium=plugin_readme&utm_campaign=export_orders_pro&utm_content=intro) for scheduling, reusable column templates, cloud delivery and export history.
 
 = WooCommerce order export features =
 
@@ -30,6 +32,59 @@ The built-in **Model Context Protocol (MCP) server** lets connected AI assistant
 * Open the export interface beside WooCommerce's Add order button.
 * Use WooCommerce HPOS / custom order tables.
 * Generate PDF reports with bundled fonts, including Japanese/CJK fallback coverage.
+
+= Upgrade to Export Orders Pro for automation and delivery =
+
+**Stop repeating the same export setup and file handoffs.** Upgrade to **Export Orders Pro** to schedule your reports, reuse column templates and send generated files directly to your team's destinations. Spend less time preparing reports and more time running your store.
+
+**Scheduled exports and background processing**
+
+* Schedule exports hourly, daily, weekly or monthly.
+* Choose how many previous days of orders each scheduled report includes.
+* Generate exports in the background and retrieve the file after leaving the export screen.
+* View scheduled runs on a dedicated page with run times, status, order counts, errors and downloads.
+
+**Automatic delivery and notifications**
+
+* Upload generated export files to FTP, Dropbox or Google Drive.
+* Select multiple configured destinations for the same export.
+* Send export-ready notifications to Zapier webhooks.
+* Email a recipient when an export completes, with an optional file attachment.
+* Review delivery success or failure messages for each destination.
+
+**Reusable templates and custom metadata**
+
+* Save, update and delete reusable column-selection and column-order templates.
+* Start with built-in Tax Report, Shipping Labels and Customer Mailing List column layouts. These are field presets, not postage-label generation services.
+* Discover custom order and order-item metadata from recent orders.
+* Add order and item meta keys manually for fields such as delivery dates, gift messages or personalization details, where those values are stored as supported metadata.
+* Discover Pro's additional metadata fields through the AI/MCP field tools.
+
+**Export history and new-order integrations**
+
+* Review background exports with job status, order counts, destination results and download links.
+* Download retained export files again from history.
+* Delete selected history entries or all entries, including their generated files on your WordPress server. Copies already delivered to external destinations are not removed.
+* Append new orders to a configured Google Sheets tab and range.
+* Send new-order events to a configured Zapier webhook.
+
+External destinations require your own accounts and connection settings. Scheduled processing depends on WordPress scheduled tasks or Action Scheduler running on your site. Google Sheets new-order sync is separate from uploading export files to Google Drive.
+
+Schedules and destination credentials are configured in WordPress. AI-controlled schedule creation and credential configuration are not included in the current tool set.
+
+[View Export Orders Pro features and pricing](https://imaginate-solutions.com/downloads/woocommerce-export-orders/?utm_source=wordpress.org&utm_medium=plugin_readme&utm_campaign=export_orders_pro&utm_content=features)
+
+= Go further with Export Orders Pro =
+
+* **Already exporting with Lite?** Pro builds on the formats, standard fields, date/status filters, draggable columns and core AI/MCP workflows you already use.
+* **Make recurring reports automatic.** Schedule hourly, daily, weekly or monthly exports instead of starting each report manually.
+* **Deliver reports without the extra handoff.** Send files to FTP, Dropbox or Google Drive, or email them as attachments.
+* **Build reports around your store.** Add supported custom order/item metadata and save reusable column templates.
+* **Keep track of every run.** Review background export history, delivery results and scheduled run status in WordPress.
+
+Both editions support WooCommerce HPOS. Pro adds the automation and reporting-management features listed above; Lite retains its existing export formats and core AI/MCP tools.
+
+[Upgrade to Export Orders Pro](https://imaginate-solutions.com/downloads/woocommerce-export-orders/?utm_source=wordpress.org&utm_medium=plugin_readme&utm_campaign=export_orders_pro&utm_content=upgrade_comparison) and make your next recurring report an automated workflow.
 
 = Export orders with Claude and ChatGPT =
 
@@ -131,9 +186,29 @@ Replace the path and user with your installation and an authorized administrator
 
 == Frequently Asked Questions ==
 
-= Are MCP and AI exports free? =
+= Are MCP and AI exports included in Lite? =
 
-Yes. All features described here are included free, with no Pro requirement. ChatGPT or Claude may require a separate subscription or workspace permission for custom connections.
+Yes. Lite includes core MCP connections, the AI Export Assistant and all five export formats. Upgrade to Pro when you need scheduled reports, custom metadata, automatic delivery and export history. ChatGPT or Claude may require a separate subscription or workspace permission for custom connections.
+
+= What does Export Orders Pro add? =
+
+Pro adds scheduled reports, reusable column templates, custom order and item metadata, background export history, email notifications with optional attachments, FTP/Dropbox/Google Drive delivery, Google Sheets new-order sync and Zapier notifications. [Compare features and pricing](https://imaginate-solutions.com/downloads/woocommerce-export-orders/?utm_source=wordpress.org&utm_medium=plugin_readme&utm_campaign=export_orders_pro&utm_content=faq).
+
+= Do I need Pro to use CSV, Excel, PDF, XML, JSON or ChatGPT/Claude? =
+
+No. All five export formats and the core AI/MCP connections are available in Lite. Pro adds automation, delivery and additional export-management features.
+
+= Can I schedule reports or upload files to Google Drive with Lite? =
+
+Upgrade to Pro for recurring schedules and automatic FTP, Dropbox and Google Drive delivery. Configure the report and its destinations in WordPress, then let scheduled processing generate and deliver future reports.
+
+= Can I export custom checkout fields with Pro? =
+
+Pro discovers supported order and order-item metadata and lets you enter meta keys manually. Availability depends on how your checkout extension stores its values; fields stored outside supported order/item metadata may need a custom integration.
+
+= Do I keep Lite active after installing Pro? =
+
+No. Pro is a standalone plugin and includes the core export and AI/MCP functionality. Keep only one edition active to avoid duplicate hooks and shared-class conflicts. Back up your site before switching editions.
 
 = Do I need an API key or an AI account for normal exports? =
 
@@ -177,7 +252,7 @@ The supplied export tools read data and generate export files. They do not expos
 
 = 2.2.0 =
 * Fixed an issue that caused refunded orders to appear twice in exports.
-* Added free Model Context Protocol (MCP) support for ChatGPT and Claude, with seven tools for discovering fields, previewing orders and generating exports.
+* Added Model Context Protocol (MCP) support to Lite for ChatGPT and Claude, with seven tools for discovering fields, previewing orders and generating exports.
 * Added OAuth authorization with S256 PKCE, dynamic client registration for Claude and client metadata discovery for ChatGPT.
 * Added the AI Connections settings page, access revocation and connection diagnostics.
 * Added OAuth discovery routing support for compatible hosting environments.
@@ -227,4 +302,4 @@ The supplied export tools read data and generate export files. They do not expos
 Fixes PHP warnings in OAuth discovery, MCP request handling and connection diagnostics. Back up your store before upgrading.
 
 = 2.2.0 =
-Free MCP and AI export features added. Back up your store before upgrading. Requires WordPress 6.9+ and 64-bit PHP 8.1+. Reconnect an existing AI connection if prompted.
+MCP and AI export features added to Lite. Back up your store before upgrading. Requires WordPress 6.9+ and 64-bit PHP 8.1+. Reconnect an existing AI connection if prompted.

@@ -976,14 +976,14 @@ CSS;
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
-		echo '<div class="wrap"><h1>AI Assistant Connections</h1>';
+		echo '<div class="wrap eowc-export-orders eowc-ai-connections"><div class="eowc-header"><div class="eowc-header-icon" aria-hidden="true"><span class="dashicons dashicons-admin-links"></span></div><div><h1 class="eowc-title">' . esc_html__( 'AI Assistant Connections', 'woocommerce-export-orders' ) . '</h1><p class="eowc-subtitle">' . esc_html__( 'Connect ChatGPT, Claude and compatible MCP clients.', 'woocommerce-export-orders' ) . '</p></div></div>';
 		if ( ! self::secure() ) {
 			echo '<div class="notice notice-error"><p>HTTPS is required. Check your WordPress URLs and HTTPS proxy configuration before connecting.</p></div>';
 		}
 		echo '<p>' . esc_html__( 'Use this server URL for both ChatGPT and Claude / MCP clients:', 'woocommerce-export-orders' ) . '</p>';
 		echo '<p style="display: flex; align-items: center; gap: 8px;">';
 		echo '<code>' . esc_html( self::resource() ) . '</code>';
-		echo '<button type="button" class="button button-secondary" onclick="navigator.clipboard.writeText(\'' . esc_js( self::resource() ) . '\'); this.innerText=\'Copied!\'; const b=this; setTimeout(function(){ b.innerText=\'Copy\'; }, 2000);"><span class="dashicons dashicons-admin-page"></span>' . esc_html__( 'Copy', 'woocommerce-export-orders' ) . '</button>';
+		echo '<button type="button" class="eowc-btn eowc-btn--secondary" onclick="navigator.clipboard.writeText(\'' . esc_js( self::resource() ) . '\'); this.innerText=\'Copied!\'; const b=this; setTimeout(function(){ b.innerText=\'Copy\'; }, 2000);"><span class="dashicons dashicons-admin-page"></span>' . esc_html__( 'Copy', 'woocommerce-export-orders' ) . '</button>';
 		echo '</p>';
 		echo '<p>Use automatic OAuth client discovery. Leave manual client credentials blank. Both ChatGPT and Claude are supported.</p>';
 		echo '<p>Discovery check: <a target="_blank" rel="noopener noreferrer" href="' . esc_url( self::server_metadata_url() ) . '">Authorization server metadata</a>.</p>';
@@ -991,7 +991,7 @@ CSS;
 		echo '<h2>Disconnect your account</h2><p>This revokes all active ChatGPT and Claude connections created by your current WordPress user.</p>';
 		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '"><input type="hidden" name="action" value="eowc_oauth_disconnect">';
 		wp_nonce_field( 'eowc_oauth_disconnect' );
-		submit_button( 'Revoke my AI connections', 'secondary' );
+		echo '<p class="submit"><button type="submit" class="eowc-btn eowc-btn--secondary">' . esc_html__( 'Revoke my AI connections', 'woocommerce-export-orders' ) . '</button></p>';
 		echo '</form>';
 		?>
 		<div class="eowc-mcp-guide" style="margin-top: 25px; background: #fff; padding: 20px; border: 1px solid #ccc; border-radius: 6px;">
@@ -1043,7 +1043,7 @@ CSS;
 		echo '<p>' . ( $until > time() ? 'Recording is active for up to 10 minutes.' : 'Recording is off.' ) . ' Results expire after one hour. This view is available only to administrators.</p>';
 		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '"><input type="hidden" name="action" value="eowc_oauth_diagnostics">';
 		wp_nonce_field( 'eowc_oauth_diagnostics' );
-		echo '<button class="button" name="diagnostic_action" value="start">Start new diagnostic recording</button> <button class="button" name="diagnostic_action" value="clear">Stop and clear diagnostics</button></form>';
+		echo '<button class="eowc-btn eowc-btn--primary" name="diagnostic_action" value="start">Start new diagnostic recording</button> <button class="eowc-btn eowc-btn--secondary" name="diagnostic_action" value="clear">Stop and clear diagnostics</button></form>';
 		$events = get_transient( 'eowc_oauth_diagnostic_events' );
 		echo '<p>Retry in Claude before opening the metadata link.</p>';
 		echo '<textarea readonly rows="12" class="large-text code" aria-label="OAuth diagnostic results">' . esc_textarea( is_array( $events ) && $events ? wp_json_encode( $events, JSON_PRETTY_PRINT ) : 'No events recorded.' ) . '</textarea></div>';

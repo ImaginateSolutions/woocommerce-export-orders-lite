@@ -292,3 +292,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 
 </form>
+
+<aside class="eowc-pro-promotion" aria-label="<?php esc_attr_e( 'Export Orders Pro', 'woocommerce-export-orders' ); ?>">
+	<strong><?php esc_html_e( 'Exporting the same report regularly?', 'woocommerce-export-orders' ); ?></strong>
+	<p><?php esc_html_e( 'Schedule reports and deliver them to Google Drive, Dropbox, FTP or email with Export Orders Pro.', 'woocommerce-export-orders' ); ?></p>
+	<a href="<?php echo esc_url( \EOWC\Includes\EOWC_Admin::pro_url( 'lite_export_footer' ) ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Explore Pro Automation', 'woocommerce-export-orders' ); ?></a>
+</aside>

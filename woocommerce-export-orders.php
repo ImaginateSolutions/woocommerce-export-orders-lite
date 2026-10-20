@@ -3,13 +3,13 @@
  * Plugin Name: Export Orders for WooCommerce – AI & MCP for Claude and ChatGPT
  * Plugin URI: https://imaginate-solutions.com/
  * Description: This plugin lets store owners export orders.
- * Version: 2.3.0
+ * Version: 2.3.1
  * Author: Imaginate Solutions
  * Author URI: https://imaginate-solutions.com/
  * Requires PHP: 8.0
  * Requires Plugins: woocommerce
  * WC requires at least: 8.0.0
- * WC tested up to: 10.7.0
+ * WC tested up to: 11.2
  * License: GPL-2.0+
  * textdomain: woocommerce-export-orders
  *
@@ -20,7 +20,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'EOWC_VERSION', '2.3.0' );
+// Pro owns the shared classes, hooks and constants when both are installed.
+$eowc_active_plugins = array_merge( (array) get_option( 'active_plugins', array() ), array_keys( (array) get_site_option( 'active_sitewide_plugins', array() ) ) );
+$eowc_pro_enabled = defined( 'EOWC_PRO_ACTIVE' );
+foreach ( $eowc_active_plugins as $eowc_active_plugin ) {
+	if ( 'woocommerce-export-orders-pro.php' === basename( $eowc_active_plugin ) ) {
+		$eowc_pro_enabled = true;
+		break;
+	}
+}
+if ( $eowc_pro_enabled ) {
+	register_activation_hook( __FILE__, static function () {
+		wp_die( esc_html__( 'Export Orders Pro is active. Deactivate Pro before activating Lite.', 'woocommerce-export-orders' ), '', array( 'back_link' => true ) );
+	} );
+	return;
+}
+unset( $eowc_active_plugins, $eowc_active_plugin, $eowc_pro_enabled );
+
+define( 'EOWC_VERSION', '2.3.1' );
 define( 'EOWC_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 define( 'EOWC_PLUGIN_FILE', __FILE__ );
 define( 'EOWC_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );

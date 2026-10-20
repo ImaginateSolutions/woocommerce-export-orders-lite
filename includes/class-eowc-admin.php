@@ -26,6 +26,7 @@ class EOWC_Admin {
 		add_filter( 'plugin_action_links_' . EOWC_PLUGIN_BASENAME, array( $this, 'plugin_action_links' ), 20, 1 );
 		add_filter( 'admin_enqueue_scripts', array( $this, 'export_enqueue_scripts' ) );
 		add_action( 'admin_menu', array( $this, 'order_export_page' ), 10 );
+		add_action( 'admin_menu', array( $this, 'register_upgrade_page' ), 30 );
 		add_action( 'admin_footer', array( $this, 'render_export_modal' ) );
 		// phpcs:ignore
 		// add_action( 'woocommerce_order_list_table_extra_tablenav', array( $this, 'add_export_button' ), 20, 1 );
@@ -47,6 +48,7 @@ class EOWC_Admin {
 	 */
 	public function plugin_action_links( $links ) {
 		$action_links = array(
+			'upgrade' => '<a href="' . esc_url( self::pro_url( 'lite_plugins_list' ) ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Upgrade to Pro', 'woocommerce-export-orders' ) . '</a>',
 			'settings' => '<a href="' . esc_url( admin_url( 'admin.php?page=wc-orders' ) ) . '" aria-label="' . esc_attr__( 'Export Orders', 'woocommerce-export-orders' ) . '">' . esc_html__( 'Export Orders', 'woocommerce-export-orders' ) . '</a>',
 		);
 
@@ -59,6 +61,10 @@ class EOWC_Admin {
 	public function export_enqueue_scripts() {
 
 		$screen = get_current_screen();
+		if ( isset( $screen->id ) && in_array( $screen->id, array( 'export-orders_page_eowc-upgrade', 'export-orders_page_eowc-ai-connections' ), true ) ) {
+			wp_enqueue_style( 'eowc-admin-css', EOWC_PLUGIN_URL . 'assets/css/admin.css', array(), EOWC_VERSION );
+			return;
+		}
 
 		if ( isset( $screen->id ) && ( 'woocommerce_page_wc-orders' === $screen->id || 'toplevel_page_eowc-export-orders' === $screen->id ) ) {
 			wp_enqueue_script( 'jquery' );
@@ -171,6 +177,19 @@ class EOWC_Admin {
 			<?php include EOWC_PLUGIN_PATH . 'template-parts/export-orders.php'; ?>
 		</div>
 		<?php
+	}
+
+	public static function pro_url( string $placement ): string {
+		return add_query_arg( array( 'utm_source' => 'wordpress_plugin', 'utm_medium' => 'lite_admin', 'utm_campaign' => 'export_orders_pro', 'utm_content' => $placement ), 'https://imaginate-solutions.com/downloads/woocommerce-export-orders/' );
+	}
+
+	public function register_upgrade_page() {
+		add_submenu_page( 'eowc-export-orders', __( 'Upgrade to Pro', 'woocommerce-export-orders' ), __( 'Upgrade to Pro', 'woocommerce-export-orders' ), 'manage_options', 'eowc-upgrade', array( $this, 'render_upgrade_page' ) );
+	}
+
+	public function render_upgrade_page() {
+		if ( ! current_user_can( 'manage_options' ) ) { return; }
+		include EOWC_PLUGIN_PATH . 'template-parts/upgrade.php';
 	}
 
 	/**
